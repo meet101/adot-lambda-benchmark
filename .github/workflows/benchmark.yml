@@ -71,17 +71,16 @@ jobs:
           check_layer "arn:aws:lambda:us-east-1:901920570463:layer:aws-otel-collector-arm64-ver-0-117-0:1"
 
       # ── Build Rust handlers ─────────────────────────────────────────────────
+      - name: Install Zig (required by cargo-lambda for cross-compilation)
+        run: pip3 install ziglang
+
       - name: Install cargo-lambda
         uses: jaxxstorm/action-install-gh-release@v1
         with:
           repo: cargo-lambda/cargo-lambda
 
-      - name: Build Rust phase1
-        working-directory: handlers/rust/phase1
-        run: cargo lambda build --release --arm64
-
-      - name: Build Rust phase2
-        working-directory: handlers/rust/phase2
+      - name: Build Rust handlers
+        working-directory: handlers/rust
         run: cargo lambda build --release --arm64
 
       # ── CDK deploy ──────────────────────────────────────────────────────────
