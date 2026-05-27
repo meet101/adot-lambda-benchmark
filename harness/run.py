@@ -23,6 +23,7 @@ import subprocess
 import sys
 import time
 import uuid
+from typing import Optional
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -151,9 +152,9 @@ def run_cell(
     memory: int,
     num_samples: int,
     run_id: str,
-    results_bucket: str | None,
+    results_bucket: Optional[str],
     snapstart_versions: dict,
-    o2_endpoint: str | None,
+    o2_endpoint: Optional[str],
 ) -> dict:
     name = fn_name(phase, runtime, variant, memory)
     cid = cell_id(runtime, variant, memory)
