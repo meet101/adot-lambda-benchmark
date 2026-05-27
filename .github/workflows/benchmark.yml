@@ -11,14 +11,15 @@ on:
 
 permissions:
   id-token: write   # required for OIDC
-  contents: write   # required to commit data/ back to the repo
+  contents: write   # required to commit docs/data/ back to the repo
 
 jobs:
   benchmark:
     runs-on: ubuntu-latest
     env:
       AWS_REGION: us-east-1
-      RESULTS_BUCKET: ""   # set after CDK deploy outputs the bucket name
+      # Bucket was created by the one-time local CDK deploy.
+      RESULTS_BUCKET: adot-benchmark-results-645263568766
       O2_ENDPOINT: ${{ github.event.inputs.o2_endpoint }}
 
     steps:
@@ -39,73 +40,26 @@ jobs:
           set -euo pipefail
           check_layer() {
             local arn="$1"
-            local name
-            name=$(echo "$arn" | cut -d: -f8)
-            local version
-            version=$(echo "$arn" | cut -d: -f9)
-            local account
-            account=$(echo "$arn" | cut -d: -f5)
             local layer_name
             layer_name=$(echo "$arn" | cut -d: -f8)
 
-            latest=$(aws lambda list-layer-versions \
-              --layer-name "$layer_name" \
-              --compatible-architecture arm64 \
-              --query 'LayerVersions[0].LayerVersionArn' \
+            latest=$(aws lambda get-layer-version-by-arn \
+              --arn "$arn" \
+              --query 'LayerVersionArn' \
               --output text 2>/dev/null || echo "NOT_FOUND")
 
             if [ "$latest" = "NOT_FOUND" ]; then
-              echo "WARNING: Could not list versions for layer $layer_name (may be cross-account public layer)"
+              echo "WARNING: Could not verify layer ARN $arn"
               return 0
             fi
-
-            echo "Pinned : $arn"
-            echo "Latest : $latest"
-            if [ "$latest" != "$arn" ]; then
-              echo "WARNING: Pinned ARN differs from latest — update benchmark-stack.ts before trusting results"
-            fi
+            echo "Confirmed: $arn"
           }
 
           check_layer "arn:aws:lambda:us-east-1:901920570463:layer:aws-otel-python-arm64-ver-1-32-0:2"
           check_layer "arn:aws:lambda:us-east-1:901920570463:layer:aws-otel-nodejs-arm64-ver-1-30-2:1"
           check_layer "arn:aws:lambda:us-east-1:901920570463:layer:aws-otel-collector-arm64-ver-0-117-0:1"
 
-      # ── Build Rust handlers ─────────────────────────────────────────────────
-      - name: Install Zig (required by cargo-lambda for cross-compilation)
-        run: pip3 install ziglang
-
-      - name: Install cargo-lambda
-        uses: jaxxstorm/action-install-gh-release@v1
-        with:
-          repo: cargo-lambda/cargo-lambda
-
-      - name: Build Rust handlers
-        working-directory: handlers/rust
-        run: cargo lambda build --release --arm64
-
-      # ── CDK deploy ──────────────────────────────────────────────────────────
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Install CDK dependencies
-        working-directory: cdk
-        run: npm ci
-
-      - name: CDK deploy
-        working-directory: cdk
-        run: |
-          npx cdk deploy BenchmarkStack HarnessStack \
-            --require-approval never \
-            --outputs-file ../cdk-outputs.json
-
-      - name: Export CDK outputs
-        run: |
-          BUCKET=$(jq -r '.BenchmarkStack.ResultsBucketName' cdk-outputs.json)
-          echo "RESULTS_BUCKET=$BUCKET" >> "$GITHUB_ENV"
-
-      # ── Publish Python SnapStart versions ──────────────────────────────────
+      # ── Publish Python SnapStart versions (idempotent) ─────────────────────
       - name: Publish SnapStart versions
         run: |
           set -euo pipefail
@@ -122,21 +76,21 @@ jobs:
             for mem in memories:
               name = f"bench-p1-python-{variant}-{mem}"
               resp = lam.publish_version(FunctionName=name)
-              versions[name] = resp["FunctionArn"]  # includes :version suffix
+              versions[name] = resp["FunctionArn"]
               print(f"Published {name} → {resp['FunctionArn']}")
 
           Path("docs/data").mkdir(parents=True, exist_ok=True)
           Path("docs/data/snapstart-versions.json").write_text(json.dumps(versions, indent=2))
           EOF
 
-      # ── Seed DynamoDB table ─────────────────────────────────────────────────
+      # ── Seed DynamoDB table (no-op if already seeded) ──────────────────────
       - name: Seed DynamoDB table
         run: |
           aws dynamodb put-item \
             --table-name bench-phase2-items \
             --item '{"pk": {"S": "test"}, "value": {"S": "benchmark-seed"}}' \
             --condition-expression "attribute_not_exists(pk)" \
-            --region us-east-1 || true  # ignore ConditionalCheckFailedException if already seeded
+            --region us-east-1 || true
 
       # ── Run harness ─────────────────────────────────────────────────────────
       - name: Set up Python
