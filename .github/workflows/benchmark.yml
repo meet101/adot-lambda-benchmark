@@ -53,6 +53,7 @@ jobs:
           RESULTS_BUCKET: ${{ env.RESULTS_BUCKET }}
 
       - name: Run Phase 2 harness
+        if: ${{ env.O2_ENDPOINT != '' }}
         run: python harness/run.py --phase 2
         env:
           RESULTS_BUCKET: ${{ env.RESULTS_BUCKET }}
