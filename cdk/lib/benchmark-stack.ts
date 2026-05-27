@@ -131,7 +131,7 @@ export class BenchmarkStack extends cdk.Stack {
       this.makeFunction("p1", "rust", "baseline", memory, {
         runtime: lambda.Runtime.PROVIDED_AL2023,
         code: lambda.Code.fromAsset(
-          path.join(__dirname, "../../handlers/rust/phase1/target/lambda/phase1")
+          path.join(__dirname, "../../handlers/rust/target/lambda/phase1")
         ),
         handler: "bootstrap",
       });
@@ -140,7 +140,7 @@ export class BenchmarkStack extends cdk.Stack {
       this.makeFunction("p1", "rust", "adot", memory, {
         runtime: lambda.Runtime.PROVIDED_AL2023,
         code: lambda.Code.fromAsset(
-          path.join(__dirname, "../../handlers/rust/phase1/target/lambda/phase1")
+          path.join(__dirname, "../../handlers/rust/target/lambda/phase1")
         ),
         handler: "bootstrap",
         layers: [adotRustLayer],
@@ -218,7 +218,7 @@ export class BenchmarkStack extends cdk.Stack {
       const p2RustBase = this.makeFunction("p2", "rust", "baseline", memory, {
         runtime: lambda.Runtime.PROVIDED_AL2023,
         code: lambda.Code.fromAsset(
-          path.join(__dirname, "../../handlers/rust/phase2/target/lambda/phase2")
+          path.join(__dirname, "../../handlers/rust/target/lambda/phase2")
         ),
         handler: "bootstrap",
         environment: phase2TableEnv,
@@ -229,7 +229,7 @@ export class BenchmarkStack extends cdk.Stack {
       const p2RustAdot = this.makeFunction("p2", "rust", "adot", memory, {
         runtime: lambda.Runtime.PROVIDED_AL2023,
         code: lambda.Code.fromAsset(
-          path.join(__dirname, "../../handlers/rust/phase2/target/lambda/phase2")
+          path.join(__dirname, "../../handlers/rust/target/lambda/phase2")
         ),
         handler: "bootstrap",
         layers: [adotRustLayer],
