@@ -235,7 +235,7 @@ def run_cell(
         samples.append(sample)
 
     # Write per-cell JSON to disk.
-    out_dir = Path(f"data/phase{phase}/raw/{run_id}")
+    out_dir = Path(f"docs/data/phase{phase}/raw/{run_id}")
     out_dir.mkdir(parents=True, exist_ok=True)
     out_file = out_dir / f"{cid}.json"
     out_file.write_text(json.dumps({"cell_id": cid, "samples": samples}, indent=2))
@@ -281,7 +281,7 @@ def main():
 
     # Load SnapStart version ARNs published by the workflow.
     snapstart_versions: dict = {}
-    sv_path = Path("data/snapstart-versions.json")
+    sv_path = Path("docs/data/snapstart-versions.json")
     if sv_path.exists():
         snapstart_versions = json.loads(sv_path.read_text())
 
@@ -326,7 +326,7 @@ def main():
         },
     }
 
-    agg_path = Path(f"data/phase{args.phase}/aggregated.json")
+    agg_path = Path(f"docs/data/phase{args.phase}/aggregated.json")
     agg_path.parent.mkdir(parents=True, exist_ok=True)
     agg_path.write_text(json.dumps(aggregated, indent=2))
     print(f"\nAggregated results written to {agg_path}")

@@ -126,8 +126,8 @@ jobs:
               versions[name] = resp["FunctionArn"]  # includes :version suffix
               print(f"Published {name} → {resp['FunctionArn']}")
 
-          Path("data").mkdir(exist_ok=True)
-          Path("data/snapstart-versions.json").write_text(json.dumps(versions, indent=2))
+          Path("docs/data").mkdir(parents=True, exist_ok=True)
+          Path("docs/data/snapstart-versions.json").write_text(json.dumps(versions, indent=2))
           EOF
 
       # ── Seed DynamoDB table ─────────────────────────────────────────────────
@@ -164,6 +164,6 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/
+          git add docs/data/
           git diff --cached --quiet || git commit -m "benchmark: add run results $(date -u +%Y-%m-%dT%H:%MZ)"
           git push
