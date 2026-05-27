@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ADOT Lambda Cold Start Benchmark</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #f8f9fa; color: #212529; }
+    header { background: #1a1a2e; color: #fff; padding: 1.5rem 2rem; }
+    header h1 { font-size: 1.4rem; font-weight: 600; }
+    header p { font-size: 0.85rem; opacity: 0.7; margin-top: 0.3rem; }
+    main { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; }
+    section { margin-bottom: 3rem; }
+    h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: #1a1a2e; border-bottom: 2px solid #dee2e6; padding-bottom: 0.4rem; }
+    .chart-wrap { background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); padding: 1.2rem; margin-bottom: 1.5rem; }
+    .chart-wrap canvas { max-height: 320px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.82rem; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    th { background: #1a1a2e; color: #fff; padding: 0.5rem 0.75rem; text-align: left; }
+    td { padding: 0.4rem 0.75rem; border-bottom: 1px solid #f0f0f0; }
+    tr:last-child td { border-bottom: none; }
+    tr:nth-child(even) td { background: #f8f9fa; }
+    .meta { font-size: 0.78rem; color: #6c757d; margin-top: 0.5rem; }
+    .error { color: #dc3545; padding: 2rem; text-align: center; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>ADOT Lambda Cold Start Benchmark</h1>
+  <p>ARM64 · us-east-1 · Node.js 24 · Python 3.13 · Rust (provided.al2023)</p>
+</header>
+<main>
+  <div id="app"><p style="padding:2rem;text-align:center">Loading results…</p></div>
+</main>
+
+<script>
+// Variant display config.
+const VARIANT_LABELS = {
+  baseline:       { label: "Baseline",        color: "#4361ee" },
+  adot:           { label: "+ADOT",           color: "#f72585" },
+  snapstart:      { label: "SnapStart",       color: "#4cc9f0" },
+  "snapstart-adot": { label: "SnapStart+ADOT", color: "#7209b7" },
+};
+
+const RUNTIME_LABELS = {
+  node:   "Node.js 24",
+  python: "Python 3.13",
+  rust:   "Rust (provided.al2023)",
+};
+
+const MEMORY_SIZES_P1 = [128, 256, 512, 1024, 1769, 3008, 10240];
+const MEMORY_SIZES_P2 = [512, 1024, 1769];
+
+async function loadJSON(path) {
+  const r = await fetch(path);
+  if (!r.ok) throw new Error(`${r.status} ${r.statusText} — ${path}`);
+  return r.json();
+}
+
+function buildChart(canvasId, labels, datasets, yLabel) {
+  const ctx = document.getElementById(canvasId).getContext("2d");
+  new Chart(ctx, {
+    type: "bar",
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: "top" } },
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: { display: true, text: yLabel },
+        },
+        x: {
+          title: { display: true, text: "Memory (MB)" },
+        },
+      },
+    },
+  });
+}
+
+function buildTable(cells, memories, variants, isSnapStart) {
+  const headers = ["Memory (MB)", ...variants.map(v => VARIANT_LABELS[v]?.label ?? v)];
+  const rows = memories.map(mem => {
+    const cols = [mem];
+    for (const v of variants) {
+      const cid = `python-${v}-${mem}` in cells
+        ? `python-${v}-${mem}`
+        : null;
+      // Locate this cell by searching by convention.
+      const key = Object.keys(cells).find(k => k.endsWith(`-${v}-${mem}`)) ?? null;
+      const cell = key ? cells[key] : null;
+      if (!cell || cell.oom_count === cell.n) {
+        cols.push("OOM");
+      } else {
+        const durField = isSnapStart ? "restore_duration_ms" : "init_duration_ms";
+        cols.push(`p50: ${cell.p50} / p90: ${cell.p90} / p99: ${cell.p99}`);
+      }
+    }
+    return cols;
+  });
+  return { headers, rows };
+}
+
+function renderTable(headers, rows) {
+  const thead = `<tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr>`;
+  const tbody = rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join("")}</tr>`).join("");
+  return `<table><thead>${thead}</thead><tbody>${tbody}</tbody></table>`;
+}
+
+function metaLine(meta, adotArn) {
+  return `Run: ${meta.run_id} · Region: ${meta.region} · Samples/cell: ${meta.samples_per_cell} · Harness SHA: ${meta.harness_sha} · Generated: ${meta.generated_at}`;
+}
+
+async function render() {
+  const app = document.getElementById("app");
+  try {
+    const [p1, p2] = await Promise.all([
+      loadJSON("../data/phase1/aggregated.json"),
+      loadJSON("../data/phase2/aggregated.json"),
+    ]);
+
+    let html = "";
+
+    // ── Phase 1 ──────────────────────────────────────────────────────────────
+    html += `<section><h2>Phase 1 — Cold Start Init Duration (p50, ms)</h2>`;
+    html += `<p class="meta">${metaLine(p1.meta)}</p>`;
+
+    const p1Runtimes = {
+      node:   { variants: ["baseline", "adot"],                           memories: MEMORY_SIZES_P1 },
+      python: { variants: ["baseline", "adot", "snapstart", "snapstart-adot"], memories: MEMORY_SIZES_P1 },
+      rust:   { variants: ["baseline", "adot"],                           memories: MEMORY_SIZES_P1 },
+    };
+
+    for (const [rt, conf] of Object.entries(p1Runtimes)) {
+      html += `<div class="chart-wrap"><canvas id="p1-${rt}"></canvas></div>`;
+      const { headers, rows } = buildTable(p1.cells, conf.memories, conf.variants, false);
+      html += renderTable(headers, rows);
+      html += "<br>";
+    }
+    html += "</section>";
+
+    // ── Phase 2 ──────────────────────────────────────────────────────────────
+    html += `<section><h2>Phase 2 — Steady-State Per-Invocation Duration (p50, ms)</h2>`;
+    html += `<p class="meta">${metaLine(p2.meta)}</p>`;
+    html += `<div class="chart-wrap"><canvas id="p2-all"></canvas></div>`;
+    html += "</section>";
+
+    app.innerHTML = html;
+
+    // Draw Phase 1 charts.
+    for (const [rt, conf] of Object.entries(p1Runtimes)) {
+      const datasets = conf.variants.map(v => {
+        const vc = VARIANT_LABELS[v] ?? { label: v, color: "#aaa" };
+        return {
+          label: vc.label,
+          backgroundColor: vc.color + "cc",
+          borderColor: vc.color,
+          borderWidth: 1,
+          data: conf.memories.map(mem => {
+            const key = Object.keys(p1.cells).find(k => k.startsWith(`${rt}-${v}-${mem}`)) ?? null;
+            return key ? (p1.cells[key].p50 ?? null) : null;
+          }),
+        };
+      });
+      buildChart(`p1-${rt}`, conf.memories.map(String), datasets, "Init / Restore Duration p50 (ms)");
+    }
+
+    // Draw Phase 2 chart (all runtimes, baseline vs adot, three memory sizes).
+    const p2Runtimes = ["node", "python", "rust"];
+    const p2Labels = [];
+    const p2BaseData = [];
+    const p2AdotData = [];
+    for (const rt of p2Runtimes) {
+      for (const mem of MEMORY_SIZES_P2) {
+        p2Labels.push(`${RUNTIME_LABELS[rt]} ${mem}MB`);
+        const baseKey = Object.keys(p2.cells).find(k => k.startsWith(`${rt}-baseline-${mem}`));
+        const adotKey = Object.keys(p2.cells).find(k => k.startsWith(`${rt}-adot-${mem}`));
+        p2BaseData.push(baseKey ? p2.cells[baseKey].p50 : null);
+        p2AdotData.push(adotKey ? p2.cells[adotKey].p50 : null);
+      }
+    }
+    buildChart("p2-all", p2Labels, [
+      { label: "Baseline", backgroundColor: "#4361eecc", data: p2BaseData },
+      { label: "+ADOT",    backgroundColor: "#f72585cc", data: p2AdotData },
+    ], "Duration p50 (ms)");
+
+  } catch (err) {
+    app.innerHTML = `<p class="error">Could not load results: ${err.message}<br>
+      Run the harness to generate data/phase1/aggregated.json and data/phase2/aggregated.json.</p>`;
+  }
+}
+
+render();
+</script>
+</body>
+</html>

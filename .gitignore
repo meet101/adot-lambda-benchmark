@@ -1,0 +1,8 @@
+node_modules/
+cdk.out/
+target/
+__pycache__/
+*.pyc
+*.pyo
+.env
+cdk.context.json

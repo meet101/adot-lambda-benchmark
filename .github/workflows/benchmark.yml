@@ -1,0 +1,169 @@
+name: Run Benchmark
+
+# Manually triggered only — no cron (design doc §8).
+on:
+  workflow_dispatch:
+    inputs:
+      o2_endpoint:
+        description: "OpenObserve OTLP endpoint for Phase 2 (e.g. http://1.2.3.4:4317)"
+        required: false
+        default: ""
+
+permissions:
+  id-token: write   # required for OIDC
+  contents: write   # required to commit data/ back to the repo
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: us-east-1
+      RESULTS_BUCKET: ""   # set after CDK deploy outputs the bucket name
+      O2_ENDPOINT: ${{ github.event.inputs.o2_endpoint }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_HARNESS_ROLE_ARN }}
+          aws-region: us-east-1
+
+      # ── Validate pinned ADOT layer ARNs (design doc §3 caveat) ─────────────
+      - name: Validate ADOT layer ARNs
+        run: |
+          set -euo pipefail
+          check_layer() {
+            local arn="$1"
+            local name
+            name=$(echo "$arn" | cut -d: -f8)
+            local version
+            version=$(echo "$arn" | cut -d: -f9)
+            local account
+            account=$(echo "$arn" | cut -d: -f5)
+            local layer_name
+            layer_name=$(echo "$arn" | cut -d: -f8)
+
+            latest=$(aws lambda list-layer-versions \
+              --layer-name "$layer_name" \
+              --compatible-architecture arm64 \
+              --query 'LayerVersions[0].LayerVersionArn' \
+              --output text 2>/dev/null || echo "NOT_FOUND")
+
+            if [ "$latest" = "NOT_FOUND" ]; then
+              echo "WARNING: Could not list versions for layer $layer_name (may be cross-account public layer)"
+              return 0
+            fi
+
+            echo "Pinned : $arn"
+            echo "Latest : $latest"
+            if [ "$latest" != "$arn" ]; then
+              echo "WARNING: Pinned ARN differs from latest — update benchmark-stack.ts before trusting results"
+            fi
+          }
+
+          check_layer "arn:aws:lambda:us-east-1:901920570463:layer:aws-otel-python-arm64-ver-1-32-0:2"
+          check_layer "arn:aws:lambda:us-east-1:901920570463:layer:aws-otel-nodejs-arm64-ver-1-30-2:1"
+          check_layer "arn:aws:lambda:us-east-1:901920570463:layer:aws-otel-collector-arm64-ver-0-117-0:1"
+
+      # ── Build Rust handlers ─────────────────────────────────────────────────
+      - name: Install cargo-lambda
+        uses: jaxxstorm/action-install-gh-release@v1
+        with:
+          repo: cargo-lambda/cargo-lambda
+
+      - name: Build Rust phase1
+        working-directory: handlers/rust/phase1
+        run: cargo lambda build --release --arm64
+
+      - name: Build Rust phase2
+        working-directory: handlers/rust/phase2
+        run: cargo lambda build --release --arm64
+
+      # ── CDK deploy ──────────────────────────────────────────────────────────
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install CDK dependencies
+        working-directory: cdk
+        run: npm ci
+
+      - name: CDK deploy
+        working-directory: cdk
+        run: |
+          npx cdk deploy BenchmarkStack HarnessStack \
+            --require-approval never \
+            --outputs-file ../cdk-outputs.json
+
+      - name: Export CDK outputs
+        run: |
+          BUCKET=$(jq -r '.BenchmarkStack.ResultsBucketName' cdk-outputs.json)
+          echo "RESULTS_BUCKET=$BUCKET" >> "$GITHUB_ENV"
+
+      # ── Publish Python SnapStart versions ──────────────────────────────────
+      - name: Publish SnapStart versions
+        run: |
+          set -euo pipefail
+          python3 - <<'EOF'
+          import boto3, json
+          from pathlib import Path
+
+          lam = boto3.client("lambda", region_name="us-east-1")
+          memories = [128, 256, 512, 1024, 1769, 3008, 10240]
+          variants = ["snapstart", "snapstart-adot"]
+          versions = {}
+
+          for variant in variants:
+            for mem in memories:
+              name = f"bench-p1-python-{variant}-{mem}"
+              resp = lam.publish_version(FunctionName=name)
+              versions[name] = resp["FunctionArn"]  # includes :version suffix
+              print(f"Published {name} → {resp['FunctionArn']}")
+
+          Path("data").mkdir(exist_ok=True)
+          Path("data/snapstart-versions.json").write_text(json.dumps(versions, indent=2))
+          EOF
+
+      # ── Seed DynamoDB table ─────────────────────────────────────────────────
+      - name: Seed DynamoDB table
+        run: |
+          aws dynamodb put-item \
+            --table-name bench-phase2-items \
+            --item '{"pk": {"S": "test"}, "value": {"S": "benchmark-seed"}}' \
+            --condition-expression "attribute_not_exists(pk)" \
+            --region us-east-1 || true  # ignore ConditionalCheckFailedException if already seeded
+
+      # ── Run harness ─────────────────────────────────────────────────────────
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install harness dependencies
+        run: pip install -r harness/requirements.txt
+
+      - name: Run Phase 1 harness
+        run: python harness/run.py --phase 1
+        env:
+          RESULTS_BUCKET: ${{ env.RESULTS_BUCKET }}
+
+      - name: Run Phase 2 harness
+        run: python harness/run.py --phase 2
+        env:
+          RESULTS_BUCKET: ${{ env.RESULTS_BUCKET }}
+          O2_ENDPOINT: ${{ env.O2_ENDPOINT }}
+
+      # ── Commit results back to the repo ────────────────────────────────────
+      - name: Commit data
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/
+          git diff --cached --quiet || git commit -m "benchmark: add run results $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push
