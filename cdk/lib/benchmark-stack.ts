@@ -1,5 +1,6 @@
 import * as cdk from "aws-cdk-lib";
 import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as logs from "aws-cdk-lib/aws-logs";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as s3 from "aws-cdk-lib/aws-s3";
 import * as iam from "aws-cdk-lib/aws-iam";
@@ -254,12 +255,17 @@ export class BenchmarkStack extends cdk.Stack {
     props: Partial<lambda.FunctionProps> & Pick<lambda.FunctionProps, "runtime" | "code" | "handler">
   ): lambda.Function {
     const name = `bench-${phase}-${runtime}-${variant}-${memory}`;
+    const logGroup = new logs.LogGroup(this, `${name}-logs`, {
+      logGroupName: `/aws/lambda/${name}`,
+      retention: logs.RetentionDays.ONE_WEEK,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
     const fn = new lambda.Function(this, name, {
       functionName: name,
       architecture: lambda.Architecture.ARM_64,
       memorySize: memory,
       timeout: cdk.Duration.seconds(30),
-      logRetention: cdk.aws_logs.RetentionDays.ONE_WEEK,
+      logGroup,
       ...props,
     });
     this.functionNames.push(name);
