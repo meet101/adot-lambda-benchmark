@@ -7,19 +7,18 @@ Usage:
   python harness/run.py --phase 2 --o2-endpoint http://<ec2-ip>:4317
   python harness/run.py --phase 1 --cells 1 --samples 1   # dry-run
 
-Reads data/snapstart-versions.json (written by the GitHub Actions workflow after
-PublishVersion) to get version ARNs for Python SnapStart variants.
+Reads docs/data/snapstart-versions.json (written by the GitHub Actions workflow
+after PublishVersion) to get version ARNs for Python SnapStart variants.
 
-Writes per-cell JSON to data/phase{N}/raw/{run_id}/ and uploads the same files
-to S3 (bucket name from env RESULTS_BUCKET). After all cells, writes
-data/phase{N}/aggregated.json.
+Writes per-cell JSON to docs/data/phase{N}/raw/{run_id}/ and uploads the same
+files to S3 (bucket name from env RESULTS_BUCKET). After all cells, writes
+docs/data/phase{N}/aggregated.json.
 """
 
 import argparse
 import json
 import os
 import re
-import statistics
 import subprocess
 import sys
 import time
@@ -177,6 +176,14 @@ def run_cell(
         )
         wait_for_update(lam, name)
 
+    # Fetch the deployed env vars once so nonce updates don't wipe them.
+    # UpdateFunctionConfiguration replaces the entire Environment object.
+    base_env = (
+        lam.get_function_configuration(FunctionName=name)
+        .get("Environment", {})
+        .get("Variables", {})
+    )
+
     samples = []
 
     for i in range(num_samples):
@@ -185,7 +192,7 @@ def run_cell(
         # Step 1: trigger a cold start by changing an env var (design doc §5.5).
         lam.update_function_configuration(
             FunctionName=name,
-            Environment={"Variables": {"COLD_START_NONCE": nonce}},
+            Environment={"Variables": {**base_env, "COLD_START_NONCE": nonce}},
         )
 
         # Step 2: wait for the update to propagate.
