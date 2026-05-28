@@ -1,0 +1,18 @@
+{
+  "cell_id": "node-baseline-128",
+  "samples": [
+    {
+      "timestamp": "2026-05-27T04:31:43.591229+00:00",
+      "runtime": "node",
+      "variant": "baseline",
+      "memory_mb": 128,
+      "sample_index": 0,
+      "request_id": "602808dd-49d9-4a0e-9d4d-6d9c8492e56d",
+      "init_duration_ms": 134.11,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 155.0,
+      "duration_ms": 20.82,
+      "max_memory_used_mb": 72.0
+    }
+  ]
+}

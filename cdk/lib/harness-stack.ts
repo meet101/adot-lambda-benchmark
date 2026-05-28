@@ -22,6 +22,7 @@ export class HarnessStack extends cdk.Stack {
 
     const harnessRole = new iam.Role(this, "HarnessRole", {
       roleName: "adot-benchmark-harness",
+      maxSessionDuration: cdk.Duration.hours(6),
       assumedBy: new iam.WebIdentityPrincipal(githubOidc.openIdConnectProviderArn, {
         StringEquals: {
           "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",

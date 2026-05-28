@@ -1,0 +1,40 @@
+name: Teardown Infrastructure
+
+# Run manually when benchmark is complete and infra is no longer needed.
+#
+# Requires a separate GitHub secret AWS_DEPLOY_ROLE_ARN pointing to an IAM
+# role with CloudFormation + IAM + Lambda + DynamoDB + S3 permissions.
+# Alternatively, run locally: cd cdk && npx cdk destroy BenchmarkStack HarnessStack --force
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  teardown:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-1
+          role-duration-seconds: 3600
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install CDK dependencies
+        working-directory: cdk
+        run: npm ci
+
+      - name: CDK destroy
+        working-directory: cdk
+        run: npx cdk destroy BenchmarkStack HarnessStack --force
