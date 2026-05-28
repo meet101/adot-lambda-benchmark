@@ -1,0 +1,119 @@
+{
+  "cell_id": "python-baseline-256",
+  "samples": [
+    {
+      "timestamp": "2026-05-28T05:46:59.517630+00:00",
+      "runtime": "python",
+      "variant": "baseline",
+      "memory_mb": 256,
+      "sample_index": 0,
+      "request_id": "7d0a161a-32f7-4df3-aa98-aaaa5905b0fd",
+      "init_duration_ms": 77.34,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 80.0,
+      "duration_ms": 1.97,
+      "max_memory_used_mb": 37.0
+    },
+    {
+      "timestamp": "2026-05-28T05:47:31.452182+00:00",
+      "runtime": "python",
+      "variant": "baseline",
+      "memory_mb": 256,
+      "sample_index": 1,
+      "request_id": "372abd30-cc96-4690-b01a-b01f07f1bcad",
+      "error": "REPORT line for 372abd30-cc96-4690-b01a-b01f07f1bcad not found in /aws/lambda/bench-p1-python-baseline-256"
+    },
+    {
+      "timestamp": "2026-05-28T05:48:40.348851+00:00",
+      "runtime": "python",
+      "variant": "baseline",
+      "memory_mb": 256,
+      "sample_index": 2,
+      "request_id": "8d80f593-518d-408d-9cca-83ea0e46b342",
+      "error": "REPORT line for 8d80f593-518d-408d-9cca-83ea0e46b342 not found in /aws/lambda/bench-p1-python-baseline-256"
+    },
+    {
+      "timestamp": "2026-05-28T05:49:49.141012+00:00",
+      "runtime": "python",
+      "variant": "baseline",
+      "memory_mb": 256,
+      "sample_index": 3,
+      "request_id": "82e3a585-90b6-4677-8c57-7c03d53403e9",
+      "error": "REPORT line for 82e3a585-90b6-4677-8c57-7c03d53403e9 not found in /aws/lambda/bench-p1-python-baseline-256"
+    },
+    {
+      "timestamp": "2026-05-28T05:50:57.927352+00:00",
+      "runtime": "python",
+      "variant": "baseline",
+      "memory_mb": 256,
+      "sample_index": 4,
+      "request_id": "38120f92-9904-41f9-af23-7174ffc7880f",
+      "error": "REPORT line for 38120f92-9904-41f9-af23-7174ffc7880f not found in /aws/lambda/bench-p1-python-baseline-256"
+    },
+    {
+      "timestamp": "2026-05-28T05:52:06.836043+00:00",
+      "runtime": "python",
+      "variant": "baseline",
+      "memory_mb": 256,
+      "sample_index": 5,
+      "request_id": "1f3d1230-6d8b-4ce7-b927-0bb1efc97dee",
+      "init_duration_ms": 99.72,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 103.0,
+      "duration_ms": 2.3,
+      "max_memory_used_mb": 37.0
+    },
+    {
+      "timestamp": "2026-05-28T05:52:54.874589+00:00",
+      "runtime": "python",
+      "variant": "baseline",
+      "memory_mb": 256,
+      "sample_index": 6,
+      "request_id": "7d973c7c-af72-454c-a4cf-94dc712c1042",
+      "init_duration_ms": 99.74,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 103.0,
+      "duration_ms": 2.49,
+      "max_memory_used_mb": 37.0
+    },
+    {
+      "timestamp": "2026-05-28T05:53:53.406673+00:00",
+      "runtime": "python",
+      "variant": "baseline",
+      "memory_mb": 256,
+      "sample_index": 7,
+      "request_id": "f9d680d4-9aa9-4260-8975-d2b9251e2ca4",
+      "init_duration_ms": 76.83,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 80.0,
+      "duration_ms": 2.37,
+      "max_memory_used_mb": 37.0
+    },
+    {
+      "timestamp": "2026-05-28T05:54:01.388644+00:00",
+      "runtime": "python",
+      "variant": "baseline",
+      "memory_mb": 256,
+      "sample_index": 8,
+      "request_id": "3fece53f-834b-4a32-a6c7-e692c493fe8f",
+      "init_duration_ms": 73.94,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 76.0,
+      "duration_ms": 2.0,
+      "max_memory_used_mb": 37.0
+    },
+    {
+      "timestamp": "2026-05-28T05:54:18.343951+00:00",
+      "runtime": "python",
+      "variant": "baseline",
+      "memory_mb": 256,
+      "sample_index": 9,
+      "request_id": "e0cac4ef-4d8b-4ab8-87c2-c61a040d5e53",
+      "init_duration_ms": 91.72,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 94.0,
+      "duration_ms": 2.12,
+      "max_memory_used_mb": 37.0
+    }
+  ]
+}

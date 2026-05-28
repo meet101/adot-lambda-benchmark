@@ -1,0 +1,131 @@
+{
+  "cell_id": "python-adot-256",
+  "samples": [
+    {
+      "timestamp": "2026-05-28T06:38:12.930706+00:00",
+      "runtime": "python",
+      "variant": "adot",
+      "memory_mb": 256,
+      "sample_index": 0,
+      "request_id": "01b0ecd3-aa4b-404b-a5ab-9990733d0a7d",
+      "init_duration_ms": 1294.79,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 1318.0,
+      "duration_ms": 23.18,
+      "max_memory_used_mb": 132.0
+    },
+    {
+      "timestamp": "2026-05-28T06:39:02.618193+00:00",
+      "runtime": "python",
+      "variant": "adot",
+      "memory_mb": 256,
+      "sample_index": 1,
+      "request_id": "3d9f27ae-ed17-467b-9ff9-4f237f94aabf",
+      "init_duration_ms": 1271.17,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 1295.0,
+      "duration_ms": 23.61,
+      "max_memory_used_mb": 132.0
+    },
+    {
+      "timestamp": "2026-05-28T06:39:28.017638+00:00",
+      "runtime": "python",
+      "variant": "adot",
+      "memory_mb": 256,
+      "sample_index": 2,
+      "request_id": "02ba3a5a-342a-420b-8fdb-31fa33185af2",
+      "init_duration_ms": 1327.93,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 1352.0,
+      "duration_ms": 23.23,
+      "max_memory_used_mb": 132.0
+    },
+    {
+      "timestamp": "2026-05-28T06:39:59.983405+00:00",
+      "runtime": "python",
+      "variant": "adot",
+      "memory_mb": 256,
+      "sample_index": 3,
+      "request_id": "b1004cab-0834-4447-b621-c0add10024db",
+      "init_duration_ms": 1081.82,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 1106.0,
+      "duration_ms": 23.98,
+      "max_memory_used_mb": 132.0
+    },
+    {
+      "timestamp": "2026-05-28T06:41:10.651721+00:00",
+      "runtime": "python",
+      "variant": "adot",
+      "memory_mb": 256,
+      "sample_index": 4,
+      "request_id": "1a01edfc-485b-4050-925c-28921546e7a9",
+      "init_duration_ms": 977.24,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 1002.0,
+      "duration_ms": 24.75,
+      "max_memory_used_mb": 132.0
+    },
+    {
+      "timestamp": "2026-05-28T06:42:10.574266+00:00",
+      "runtime": "python",
+      "variant": "adot",
+      "memory_mb": 256,
+      "sample_index": 5,
+      "request_id": "d979bae0-668d-4ff2-8f13-d3530021980c",
+      "error": "REPORT line for d979bae0-668d-4ff2-8f13-d3530021980c not found in /aws/lambda/bench-p1-python-adot-256"
+    },
+    {
+      "timestamp": "2026-05-28T06:43:21.173604+00:00",
+      "runtime": "python",
+      "variant": "adot",
+      "memory_mb": 256,
+      "sample_index": 6,
+      "request_id": "c77d4655-4b92-43fd-8c85-43612e7b54d4",
+      "init_duration_ms": 1077.64,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 1102.0,
+      "duration_ms": 24.18,
+      "max_memory_used_mb": 132.0
+    },
+    {
+      "timestamp": "2026-05-28T06:44:02.627945+00:00",
+      "runtime": "python",
+      "variant": "adot",
+      "memory_mb": 256,
+      "sample_index": 7,
+      "request_id": "b2eec639-e2f3-4aa0-8ef8-45a24d8427e0",
+      "init_duration_ms": 1077.72,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 1102.0,
+      "duration_ms": 24.08,
+      "max_memory_used_mb": 132.0
+    },
+    {
+      "timestamp": "2026-05-28T06:44:43.381530+00:00",
+      "runtime": "python",
+      "variant": "adot",
+      "memory_mb": 256,
+      "sample_index": 8,
+      "request_id": "263f8bf1-e049-469d-b00d-5a793245e056",
+      "init_duration_ms": 1252.89,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 1277.0,
+      "duration_ms": 23.3,
+      "max_memory_used_mb": 132.0
+    },
+    {
+      "timestamp": "2026-05-28T06:45:53.856229+00:00",
+      "runtime": "python",
+      "variant": "adot",
+      "memory_mb": 256,
+      "sample_index": 9,
+      "request_id": "1bae7691-faf6-4911-aae6-d430b15690b2",
+      "init_duration_ms": 1272.02,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 1297.0,
+      "duration_ms": 24.12,
+      "max_memory_used_mb": 132.0
+    }
+  ]
+}

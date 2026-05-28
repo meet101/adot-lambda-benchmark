@@ -1,0 +1,95 @@
+{
+  "cell_id": "python-snapstart-1024",
+  "samples": [
+    {
+      "timestamp": "2026-05-28T07:53:35.166581+00:00",
+      "runtime": "python",
+      "variant": "snapstart",
+      "memory_mb": 1024,
+      "sample_index": 0,
+      "request_id": "bb3c9cae-9faa-4277-b27f-804ae2c281c5",
+      "error": "REPORT line for bb3c9cae-9faa-4277-b27f-804ae2c281c5 not found in /aws/lambda/bench-p1-python-snapstart-1024"
+    },
+    {
+      "timestamp": "2026-05-28T07:54:46.847580+00:00",
+      "runtime": "python",
+      "variant": "snapstart",
+      "memory_mb": 1024,
+      "sample_index": 1,
+      "request_id": "e68e77b6-1846-42f5-ac57-cbf91503269f",
+      "error": "REPORT line for e68e77b6-1846-42f5-ac57-cbf91503269f not found in /aws/lambda/bench-p1-python-snapstart-1024"
+    },
+    {
+      "timestamp": "2026-05-28T07:55:55.646248+00:00",
+      "runtime": "python",
+      "variant": "snapstart",
+      "memory_mb": 1024,
+      "sample_index": 2,
+      "request_id": "9670e57e-2d14-4c12-99fd-879f913f0d3d",
+      "error": "REPORT line for 9670e57e-2d14-4c12-99fd-879f913f0d3d not found in /aws/lambda/bench-p1-python-snapstart-1024"
+    },
+    {
+      "timestamp": "2026-05-28T07:57:05.376604+00:00",
+      "runtime": "python",
+      "variant": "snapstart",
+      "memory_mb": 1024,
+      "sample_index": 3,
+      "request_id": "1c6eaa0d-529b-4216-9c57-07489c1e1510",
+      "error": "REPORT line for 1c6eaa0d-529b-4216-9c57-07489c1e1510 not found in /aws/lambda/bench-p1-python-snapstart-1024"
+    },
+    {
+      "timestamp": "2026-05-28T07:58:15.021032+00:00",
+      "runtime": "python",
+      "variant": "snapstart",
+      "memory_mb": 1024,
+      "sample_index": 4,
+      "request_id": "8ce4eff8-7573-4014-ad8d-4a0cc98da621",
+      "error": "REPORT line for 8ce4eff8-7573-4014-ad8d-4a0cc98da621 not found in /aws/lambda/bench-p1-python-snapstart-1024"
+    },
+    {
+      "timestamp": "2026-05-28T07:59:24.275826+00:00",
+      "runtime": "python",
+      "variant": "snapstart",
+      "memory_mb": 1024,
+      "sample_index": 5,
+      "request_id": "e1772589-68cd-4790-b66d-ae72590d7847",
+      "error": "REPORT line for e1772589-68cd-4790-b66d-ae72590d7847 not found in /aws/lambda/bench-p1-python-snapstart-1024"
+    },
+    {
+      "timestamp": "2026-05-28T08:00:34.015056+00:00",
+      "runtime": "python",
+      "variant": "snapstart",
+      "memory_mb": 1024,
+      "sample_index": 6,
+      "request_id": "bee564af-df7e-437e-bbb0-c0cc0f763b6c",
+      "error": "REPORT line for bee564af-df7e-437e-bbb0-c0cc0f763b6c not found in /aws/lambda/bench-p1-python-snapstart-1024"
+    },
+    {
+      "timestamp": "2026-05-28T08:01:42.849046+00:00",
+      "runtime": "python",
+      "variant": "snapstart",
+      "memory_mb": 1024,
+      "sample_index": 7,
+      "request_id": "ec73f729-ba31-4703-a4a9-22eb5ef55098",
+      "error": "REPORT line for ec73f729-ba31-4703-a4a9-22eb5ef55098 not found in /aws/lambda/bench-p1-python-snapstart-1024"
+    },
+    {
+      "timestamp": "2026-05-28T08:02:51.842846+00:00",
+      "runtime": "python",
+      "variant": "snapstart",
+      "memory_mb": 1024,
+      "sample_index": 8,
+      "request_id": "58d80ea2-a958-418e-9e74-d057c5261e0b",
+      "error": "REPORT line for 58d80ea2-a958-418e-9e74-d057c5261e0b not found in /aws/lambda/bench-p1-python-snapstart-1024"
+    },
+    {
+      "timestamp": "2026-05-28T08:04:01.363337+00:00",
+      "runtime": "python",
+      "variant": "snapstart",
+      "memory_mb": 1024,
+      "sample_index": 9,
+      "request_id": "e2bf3b55-6a32-45f3-a841-53f70ccfb572",
+      "error": "REPORT line for e2bf3b55-6a32-45f3-a841-53f70ccfb572 not found in /aws/lambda/bench-p1-python-snapstart-1024"
+    }
+  ]
+}

@@ -1,20 +1,395 @@
 {
   "meta": {
-    "run_id": "20260527T043140Z-3d2e54",
+    "run_id": "20260528T041202Z-ab4e0c",
     "phase": 1,
     "region": "us-east-1",
-    "harness_sha": "ac9e139",
-    "samples_per_cell": 1,
-    "generated_at": "2026-05-27T04:31:46.728230+00:00"
+    "harness_sha": "f370bcd",
+    "samples_per_cell": 10,
+    "generated_at": "2026-05-28T10:01:40.648685+00:00"
   },
   "cells": {
     "node-baseline-128": {
-      "p50": 134.11,
-      "p90": 134.11,
-      "p99": 134.11,
-      "min": 134.11,
-      "max": 134.11,
+      "n": 10,
+      "oom_count": 10
+    },
+    "node-baseline-256": {
+      "n": 10,
+      "oom_count": 10
+    },
+    "node-baseline-512": {
+      "n": 10,
+      "oom_count": 10
+    },
+    "node-baseline-1024": {
+      "n": 10,
+      "oom_count": 10
+    },
+    "node-baseline-1769": {
+      "n": 10,
+      "oom_count": 10
+    },
+    "node-baseline-3008": {
+      "n": 10,
+      "oom_count": 10
+    },
+    "node-baseline-10240": {
+      "n": 10,
+      "oom_count": 10
+    },
+    "node-adot-128": {
+      "n": 10,
+      "oom_count": 10
+    },
+    "node-adot-256": {
+      "n": 10,
+      "oom_count": 10
+    },
+    "node-adot-512": {
+      "n": 10,
+      "oom_count": 10
+    },
+    "node-adot-1024": {
+      "n": 10,
+      "oom_count": 10
+    },
+    "node-adot-1769": {
+      "n": 10,
+      "oom_count": 10
+    },
+    "node-adot-3008": {
+      "n": 10,
+      "oom_count": 10
+    },
+    "node-adot-10240": {
+      "n": 10,
+      "oom_count": 10
+    },
+    "python-baseline-128": {
+      "p50": 98.72,
+      "p90": 110.43,
+      "p99": 115.43,
+      "min": 78.17,
+      "max": 115.98,
+      "n": 6,
+      "oom_count": 0
+    },
+    "python-baseline-256": {
+      "p50": 84.53,
+      "p90": 99.73,
+      "p99": 99.74,
+      "min": 73.94,
+      "max": 99.74,
+      "n": 6,
+      "oom_count": 0
+    },
+    "python-baseline-512": {
+      "p50": 99.38,
+      "p90": 108.42,
+      "p99": 115.76,
+      "min": 80.43,
+      "max": 116.58,
+      "n": 8,
+      "oom_count": 0
+    },
+    "python-baseline-1024": {
+      "p50": 92.45,
+      "p90": 98.86,
+      "p99": 99.3,
+      "min": 75.73,
+      "max": 99.35,
+      "n": 7,
+      "oom_count": 0
+    },
+    "python-baseline-1769": {
+      "p50": 96.92,
+      "p90": 116.67,
+      "p99": 132.89,
+      "min": 77.48,
+      "max": 134.69,
+      "n": 6,
+      "oom_count": 0
+    },
+    "python-baseline-3008": {
+      "p50": 96.87,
+      "p90": 100.02,
+      "p99": 102.17,
+      "min": 76.42,
+      "max": 102.41,
+      "n": 8,
+      "oom_count": 0
+    },
+    "python-baseline-10240": {
+      "p50": 96.36,
+      "p90": 101.8,
+      "p99": 102.19,
+      "min": 76.51,
+      "max": 102.23,
+      "n": 8,
+      "oom_count": 0
+    },
+    "python-adot-128": {
+      "p50": 1254.08,
+      "p90": 1306.25,
+      "p99": 1319.21,
+      "min": 979.72,
+      "max": 1320.65,
+      "n": 5,
+      "oom_count": 0
+    },
+    "python-adot-256": {
+      "p50": 1252.89,
+      "p90": 1301.42,
+      "p99": 1325.28,
+      "min": 977.24,
+      "max": 1327.93,
+      "n": 9,
+      "oom_count": 0
+    },
+    "python-adot-512": {
+      "p50": 1267.32,
+      "p90": 1364.25,
+      "p99": 1429.72,
+      "min": 1007.08,
+      "max": 1437.0,
+      "n": 9,
+      "oom_count": 0
+    },
+    "python-adot-1024": {
+      "p50": 1296.46,
+      "p90": 1377.89,
+      "p99": 1554.67,
+      "min": 1025.57,
+      "max": 1574.31,
+      "n": 10,
+      "oom_count": 0
+    },
+    "python-adot-1769": {
+      "p50": 1163.04,
+      "p90": 1333.46,
+      "p99": 1342.6,
+      "min": 1024.05,
+      "max": 1343.62,
+      "n": 8,
+      "oom_count": 0
+    },
+    "python-adot-3008": {
+      "p50": 1234.66,
+      "p90": 1262.63,
+      "p99": 1265.32,
+      "min": 979.37,
+      "max": 1265.62,
+      "n": 10,
+      "oom_count": 0
+    },
+    "python-adot-10240": {
+      "p50": 1045.21,
+      "p90": 1199.72,
+      "p99": 1231.07,
+      "min": 914.27,
+      "max": 1234.55,
+      "n": 8,
+      "oom_count": 0
+    },
+    "python-snapstart-128": {
+      "n": 10,
+      "oom_count": 10
+    },
+    "python-snapstart-256": {
+      "n": 10,
+      "oom_count": 10
+    },
+    "python-snapstart-512": {
+      "n": 10,
+      "oom_count": 10
+    },
+    "python-snapstart-1024": {
+      "n": 10,
+      "oom_count": 10
+    },
+    "python-snapstart-1769": {
+      "n": 10,
+      "oom_count": 10
+    },
+    "python-snapstart-3008": {
+      "n": 10,
+      "oom_count": 10
+    },
+    "python-snapstart-10240": {
+      "n": 10,
+      "oom_count": 10
+    },
+    "python-snapstart-adot-128": {
+      "n": 10,
+      "oom_count": 10
+    },
+    "python-snapstart-adot-256": {
+      "p50": 1926.37,
+      "p90": 1926.37,
+      "p99": 1926.37,
+      "min": 1926.37,
+      "max": 1926.37,
       "n": 1,
+      "oom_count": 0
+    },
+    "python-snapstart-adot-512": {
+      "p50": 1196.46,
+      "p90": 1196.46,
+      "p99": 1196.46,
+      "min": 1196.46,
+      "max": 1196.46,
+      "n": 1,
+      "oom_count": 0
+    },
+    "python-snapstart-adot-1024": {
+      "n": 10,
+      "oom_count": 10
+    },
+    "python-snapstart-adot-1769": {
+      "p50": 724.85,
+      "p90": 724.85,
+      "p99": 724.85,
+      "min": 724.85,
+      "max": 724.85,
+      "n": 1,
+      "oom_count": 0
+    },
+    "python-snapstart-adot-3008": {
+      "p50": 705.99,
+      "p90": 705.99,
+      "p99": 705.99,
+      "min": 705.99,
+      "max": 705.99,
+      "n": 1,
+      "oom_count": 0
+    },
+    "python-snapstart-adot-10240": {
+      "n": 10,
+      "oom_count": 10
+    },
+    "rust-baseline-128": {
+      "p50": 28.4,
+      "p90": 55.31,
+      "p99": 56.35,
+      "min": 20.04,
+      "max": 56.47,
+      "n": 10,
+      "oom_count": 0
+    },
+    "rust-baseline-256": {
+      "p50": 30.32,
+      "p90": 57.02,
+      "p99": 57.54,
+      "min": 19.96,
+      "max": 57.6,
+      "n": 10,
+      "oom_count": 0
+    },
+    "rust-baseline-512": {
+      "p50": 30.01,
+      "p90": 35.47,
+      "p99": 53.02,
+      "min": 19.5,
+      "max": 54.97,
+      "n": 10,
+      "oom_count": 0
+    },
+    "rust-baseline-1024": {
+      "p50": 42.3,
+      "p90": 57.09,
+      "p99": 57.54,
+      "min": 23.92,
+      "max": 57.59,
+      "n": 10,
+      "oom_count": 0
+    },
+    "rust-baseline-1769": {
+      "p50": 42.31,
+      "p90": 58.73,
+      "p99": 58.94,
+      "min": 21.75,
+      "max": 58.96,
+      "n": 10,
+      "oom_count": 0
+    },
+    "rust-baseline-3008": {
+      "p50": 28.56,
+      "p90": 51.87,
+      "p99": 55.27,
+      "min": 21.6,
+      "max": 55.65,
+      "n": 10,
+      "oom_count": 0
+    },
+    "rust-baseline-10240": {
+      "p50": 33.5,
+      "p90": 57.7,
+      "p99": 61.05,
+      "min": 22.8,
+      "max": 61.42,
+      "n": 10,
+      "oom_count": 0
+    },
+    "rust-adot-128": {
+      "p50": 310.78,
+      "p90": 331.4,
+      "p99": 337.73,
+      "min": 244.09,
+      "max": 338.43,
+      "n": 10,
+      "oom_count": 0
+    },
+    "rust-adot-256": {
+      "p50": 314.12,
+      "p90": 335.43,
+      "p99": 348.99,
+      "min": 244.38,
+      "max": 350.5,
+      "n": 10,
+      "oom_count": 0
+    },
+    "rust-adot-512": {
+      "p50": 307.42,
+      "p90": 334.8,
+      "p99": 355.87,
+      "min": 255.06,
+      "max": 358.21,
+      "n": 10,
+      "oom_count": 0
+    },
+    "rust-adot-1024": {
+      "p50": 298.48,
+      "p90": 327.82,
+      "p99": 343.94,
+      "min": 243.63,
+      "max": 345.73,
+      "n": 10,
+      "oom_count": 0
+    },
+    "rust-adot-1769": {
+      "p50": 327.37,
+      "p90": 336.76,
+      "p99": 363.41,
+      "min": 298.83,
+      "max": 366.37,
+      "n": 10,
+      "oom_count": 0
+    },
+    "rust-adot-3008": {
+      "p50": 284.0,
+      "p90": 304.11,
+      "p99": 311.1,
+      "min": 227.73,
+      "max": 311.88,
+      "n": 10,
+      "oom_count": 0
+    },
+    "rust-adot-10240": {
+      "p50": 291.51,
+      "p90": 307.55,
+      "p99": 327.94,
+      "min": 242.47,
+      "max": 330.21,
+      "n": 10,
       "oom_count": 0
     }
   }

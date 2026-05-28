@@ -1,0 +1,95 @@
+{
+  "cell_id": "node-baseline-3008",
+  "samples": [
+    {
+      "timestamp": "2026-05-28T05:10:21.217590+00:00",
+      "runtime": "node",
+      "variant": "baseline",
+      "memory_mb": 3008,
+      "sample_index": 0,
+      "request_id": "81f6d38a-8806-44bf-9475-e758bafa020f",
+      "error": "REPORT line for 81f6d38a-8806-44bf-9475-e758bafa020f not found in /aws/lambda/bench-p1-node-baseline-3008"
+    },
+    {
+      "timestamp": "2026-05-28T05:11:31.662334+00:00",
+      "runtime": "node",
+      "variant": "baseline",
+      "memory_mb": 3008,
+      "sample_index": 1,
+      "request_id": "d7b98c48-76a8-4f97-a941-eaf72b1e5d34",
+      "error": "REPORT line for d7b98c48-76a8-4f97-a941-eaf72b1e5d34 not found in /aws/lambda/bench-p1-node-baseline-3008"
+    },
+    {
+      "timestamp": "2026-05-28T05:12:40.983059+00:00",
+      "runtime": "node",
+      "variant": "baseline",
+      "memory_mb": 3008,
+      "sample_index": 2,
+      "request_id": "33f66a18-0b29-4c8f-a345-78b7a36f9a80",
+      "error": "REPORT line for 33f66a18-0b29-4c8f-a345-78b7a36f9a80 not found in /aws/lambda/bench-p1-node-baseline-3008"
+    },
+    {
+      "timestamp": "2026-05-28T05:13:50.062475+00:00",
+      "runtime": "node",
+      "variant": "baseline",
+      "memory_mb": 3008,
+      "sample_index": 3,
+      "request_id": "4b13cb9e-107d-4190-8571-87a7e1360afc",
+      "error": "REPORT line for 4b13cb9e-107d-4190-8571-87a7e1360afc not found in /aws/lambda/bench-p1-node-baseline-3008"
+    },
+    {
+      "timestamp": "2026-05-28T05:14:59.186592+00:00",
+      "runtime": "node",
+      "variant": "baseline",
+      "memory_mb": 3008,
+      "sample_index": 4,
+      "request_id": "4582cc24-bc8b-4523-b288-2aac059d9311",
+      "error": "REPORT line for 4582cc24-bc8b-4523-b288-2aac059d9311 not found in /aws/lambda/bench-p1-node-baseline-3008"
+    },
+    {
+      "timestamp": "2026-05-28T05:16:08.725012+00:00",
+      "runtime": "node",
+      "variant": "baseline",
+      "memory_mb": 3008,
+      "sample_index": 5,
+      "request_id": "ed221882-d2db-43f9-a424-aeabd45c0f5f",
+      "error": "REPORT line for ed221882-d2db-43f9-a424-aeabd45c0f5f not found in /aws/lambda/bench-p1-node-baseline-3008"
+    },
+    {
+      "timestamp": "2026-05-28T05:17:18.368858+00:00",
+      "runtime": "node",
+      "variant": "baseline",
+      "memory_mb": 3008,
+      "sample_index": 6,
+      "request_id": "24195814-d7d1-4b9d-9236-291b301ced6b",
+      "error": "REPORT line for 24195814-d7d1-4b9d-9236-291b301ced6b not found in /aws/lambda/bench-p1-node-baseline-3008"
+    },
+    {
+      "timestamp": "2026-05-28T05:18:28.101410+00:00",
+      "runtime": "node",
+      "variant": "baseline",
+      "memory_mb": 3008,
+      "sample_index": 7,
+      "request_id": "cbbd36bc-823e-44fb-9114-54345e243c57",
+      "error": "REPORT line for cbbd36bc-823e-44fb-9114-54345e243c57 not found in /aws/lambda/bench-p1-node-baseline-3008"
+    },
+    {
+      "timestamp": "2026-05-28T05:19:37.309576+00:00",
+      "runtime": "node",
+      "variant": "baseline",
+      "memory_mb": 3008,
+      "sample_index": 8,
+      "request_id": "f13aa85a-b6c4-467d-94f7-e1151a0ff9ad",
+      "error": "REPORT line for f13aa85a-b6c4-467d-94f7-e1151a0ff9ad not found in /aws/lambda/bench-p1-node-baseline-3008"
+    },
+    {
+      "timestamp": "2026-05-28T05:20:46.436124+00:00",
+      "runtime": "node",
+      "variant": "baseline",
+      "memory_mb": 3008,
+      "sample_index": 9,
+      "request_id": "35723a5f-9ebe-4ea3-9100-1045dde57fb3",
+      "error": "REPORT line for 35723a5f-9ebe-4ea3-9100-1045dde57fb3 not found in /aws/lambda/bench-p1-node-baseline-3008"
+    }
+  ]
+}

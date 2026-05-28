@@ -1,0 +1,95 @@
+{
+  "cell_id": "node-adot-128",
+  "samples": [
+    {
+      "timestamp": "2026-05-28T05:33:33.425731+00:00",
+      "runtime": "node",
+      "variant": "adot",
+      "memory_mb": 128,
+      "sample_index": 0,
+      "request_id": "837ff028-28c4-4657-8c97-b9f23a8b5867",
+      "oom": true
+    },
+    {
+      "timestamp": "2026-05-28T05:33:38.609778+00:00",
+      "runtime": "node",
+      "variant": "adot",
+      "memory_mb": 128,
+      "sample_index": 1,
+      "request_id": "ae61c0fb-f324-4649-a46b-7a4ae6969f70",
+      "oom": true
+    },
+    {
+      "timestamp": "2026-05-28T05:33:43.229003+00:00",
+      "runtime": "node",
+      "variant": "adot",
+      "memory_mb": 128,
+      "sample_index": 2,
+      "request_id": "81489bb7-e1f3-4934-a100-414df81f1542",
+      "oom": true
+    },
+    {
+      "timestamp": "2026-05-28T05:33:49.390440+00:00",
+      "runtime": "node",
+      "variant": "adot",
+      "memory_mb": 128,
+      "sample_index": 3,
+      "request_id": "ef5752ce-dab4-400f-af01-571739cc209a",
+      "oom": true
+    },
+    {
+      "timestamp": "2026-05-28T05:33:54.414945+00:00",
+      "runtime": "node",
+      "variant": "adot",
+      "memory_mb": 128,
+      "sample_index": 4,
+      "request_id": "83829003-82ea-4f54-ad79-16b5e3ff6dd0",
+      "oom": true
+    },
+    {
+      "timestamp": "2026-05-28T05:33:59.860868+00:00",
+      "runtime": "node",
+      "variant": "adot",
+      "memory_mb": 128,
+      "sample_index": 5,
+      "request_id": "11674701-b8ba-4675-96ce-7700a3f8d8bc",
+      "oom": true
+    },
+    {
+      "timestamp": "2026-05-28T05:34:04.791545+00:00",
+      "runtime": "node",
+      "variant": "adot",
+      "memory_mb": 128,
+      "sample_index": 6,
+      "request_id": "73bb641b-3305-4159-8a9d-ca57fcda8104",
+      "oom": true
+    },
+    {
+      "timestamp": "2026-05-28T05:34:09.685838+00:00",
+      "runtime": "node",
+      "variant": "adot",
+      "memory_mb": 128,
+      "sample_index": 7,
+      "request_id": "0530f8e4-a6e3-43f4-81d4-cd421266253e",
+      "oom": true
+    },
+    {
+      "timestamp": "2026-05-28T05:34:14.185767+00:00",
+      "runtime": "node",
+      "variant": "adot",
+      "memory_mb": 128,
+      "sample_index": 8,
+      "request_id": "a43ab3c9-3f86-442f-b25a-072f26969376",
+      "oom": true
+    },
+    {
+      "timestamp": "2026-05-28T05:34:19.158911+00:00",
+      "runtime": "node",
+      "variant": "adot",
+      "memory_mb": 128,
+      "sample_index": 9,
+      "request_id": "0c09dfb2-18c0-486c-acec-cb7bacbc8d65",
+      "oom": true
+    }
+  ]
+}

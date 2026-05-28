@@ -1,0 +1,127 @@
+{
+  "cell_id": "python-baseline-10240",
+  "samples": [
+    {
+      "timestamp": "2026-05-28T06:23:21.498094+00:00",
+      "runtime": "python",
+      "variant": "baseline",
+      "memory_mb": 10240,
+      "sample_index": 0,
+      "request_id": "5125b6cd-5921-43b7-9642-2a56e3c779a8",
+      "init_duration_ms": 96.87,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 99.0,
+      "duration_ms": 2.06,
+      "max_memory_used_mb": 37.0
+    },
+    {
+      "timestamp": "2026-05-28T06:23:38.845045+00:00",
+      "runtime": "python",
+      "variant": "baseline",
+      "memory_mb": 10240,
+      "sample_index": 1,
+      "request_id": "7b9fcbbb-6af5-44e2-98d6-868bb97fcc25",
+      "init_duration_ms": 91.99,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 94.0,
+      "duration_ms": 2.01,
+      "max_memory_used_mb": 37.0
+    },
+    {
+      "timestamp": "2026-05-28T06:23:56.041626+00:00",
+      "runtime": "python",
+      "variant": "baseline",
+      "memory_mb": 10240,
+      "sample_index": 2,
+      "request_id": "c3e75a9d-2032-4df1-aa75-7f7373b10b1a",
+      "init_duration_ms": 76.51,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 79.0,
+      "duration_ms": 1.94,
+      "max_memory_used_mb": 37.0
+    },
+    {
+      "timestamp": "2026-05-28T06:24:13.038083+00:00",
+      "runtime": "python",
+      "variant": "baseline",
+      "memory_mb": 10240,
+      "sample_index": 3,
+      "request_id": "9a639b58-3172-4bce-b4aa-7843a06ed6a6",
+      "init_duration_ms": 102.23,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 105.0,
+      "duration_ms": 2.41,
+      "max_memory_used_mb": 37.0
+    },
+    {
+      "timestamp": "2026-05-28T06:25:23.224171+00:00",
+      "runtime": "python",
+      "variant": "baseline",
+      "memory_mb": 10240,
+      "sample_index": 4,
+      "request_id": "bf35b3d9-d6bf-437e-8243-62439209ddc8",
+      "error": "REPORT line for bf35b3d9-d6bf-437e-8243-62439209ddc8 not found in /aws/lambda/bench-p1-python-baseline-10240"
+    },
+    {
+      "timestamp": "2026-05-28T06:26:31.989102+00:00",
+      "runtime": "python",
+      "variant": "baseline",
+      "memory_mb": 10240,
+      "sample_index": 5,
+      "request_id": "ccf720ea-d357-4a1b-bd49-ced7a6537fd3",
+      "init_duration_ms": 100.1,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 103.0,
+      "duration_ms": 2.01,
+      "max_memory_used_mb": 37.0
+    },
+    {
+      "timestamp": "2026-05-28T06:27:02.432975+00:00",
+      "runtime": "python",
+      "variant": "baseline",
+      "memory_mb": 10240,
+      "sample_index": 6,
+      "request_id": "1ee48b72-d22e-497e-9ce0-c4f1e864adf7",
+      "error": "REPORT line for 1ee48b72-d22e-497e-9ce0-c4f1e864adf7 not found in /aws/lambda/bench-p1-python-baseline-10240"
+    },
+    {
+      "timestamp": "2026-05-28T06:28:11.340192+00:00",
+      "runtime": "python",
+      "variant": "baseline",
+      "memory_mb": 10240,
+      "sample_index": 7,
+      "request_id": "90d2356f-7131-46e4-9d7c-612c4c659039",
+      "init_duration_ms": 77.44,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 80.0,
+      "duration_ms": 1.71,
+      "max_memory_used_mb": 37.0
+    },
+    {
+      "timestamp": "2026-05-28T06:28:59.320915+00:00",
+      "runtime": "python",
+      "variant": "baseline",
+      "memory_mb": 10240,
+      "sample_index": 8,
+      "request_id": "c426324d-5842-4c94-b0b8-54f141688562",
+      "init_duration_ms": 95.84,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 100.0,
+      "duration_ms": 3.9,
+      "max_memory_used_mb": 37.0
+    },
+    {
+      "timestamp": "2026-05-28T06:29:30.110025+00:00",
+      "runtime": "python",
+      "variant": "baseline",
+      "memory_mb": 10240,
+      "sample_index": 9,
+      "request_id": "d77b3d93-e83e-4edc-b77a-08f6d3c65d0a",
+      "init_duration_ms": 101.62,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 104.0,
+      "duration_ms": 2.19,
+      "max_memory_used_mb": 37.0
+    }
+  ]
+}
