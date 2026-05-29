@@ -10,18 +10,35 @@
     body { font-family: system-ui, sans-serif; background: #f8f9fa; color: #212529; }
     header { background: #1a1a2e; color: #fff; padding: 1.5rem 2rem; }
     header h1 { font-size: 1.4rem; font-weight: 600; }
-    header p { font-size: 0.85rem; opacity: 0.7; margin-top: 0.3rem; }
-    main { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; }
+    header p  { font-size: 0.85rem; opacity: 0.7; margin-top: 0.3rem; }
+    main { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
     section { margin-bottom: 3rem; }
-    h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: #1a1a2e; border-bottom: 2px solid #dee2e6; padding-bottom: 0.4rem; }
-    .chart-wrap { background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); padding: 1.2rem; margin-bottom: 1.5rem; }
-    .chart-wrap canvas { max-height: 320px; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.82rem; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
-    th { background: #1a1a2e; color: #fff; padding: 0.5rem 0.75rem; text-align: left; }
-    td { padding: 0.4rem 0.75rem; border-bottom: 1px solid #f0f0f0; }
+    h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: #1a1a2e;
+         border-bottom: 2px solid #dee2e6; padding-bottom: 0.4rem; }
+    h3 { font-size: 0.95rem; font-weight: 600; margin: 1.5rem 0 0.6rem; color: #343a40; }
+    .chart-wrap { background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+                  padding: 1.2rem; margin-bottom: 1rem; }
+    .chart-wrap canvas { max-height: 300px; }
+    .table-wrap { overflow-x: auto; margin-bottom: 1.5rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.8rem; background: #fff;
+            border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            white-space: nowrap; }
+    th { background: #1a1a2e; color: #fff; padding: 0.45rem 0.75rem; text-align: right; font-weight: 500; }
+    th:first-child { text-align: left; }
+    td { padding: 0.35rem 0.75rem; border-bottom: 1px solid #f0f0f0; text-align: right; }
+    td:first-child { text-align: left; font-weight: 500; }
     tr:last-child td { border-bottom: none; }
     tr:nth-child(even) td { background: #f8f9fa; }
-    .meta { font-size: 0.78rem; color: #6c757d; margin-top: 0.5rem; }
+    .na  { color: #adb5bd; }
+    .oom { color: #dc3545; font-weight: 600; }
+    .overhead-pos { color: #dc3545; }
+    .overhead-neg { color: #198754; }
+    .meta { font-size: 0.75rem; color: #6c757d; margin-top: 0.4rem; margin-bottom: 0.5rem; }
+    .badge { display: inline-block; font-size: 0.7rem; padding: 0.15rem 0.5rem;
+             border-radius: 99px; font-weight: 600; margin-left: 0.5rem; vertical-align: middle; }
+    .badge-smoke { background: #fff3cd; color: #856404; }
+    .note { font-size: 0.8rem; color: #6c757d; background: #fff; border-left: 3px solid #dee2e6;
+            padding: 0.6rem 1rem; border-radius: 0 4px 4px 0; margin-bottom: 1rem; }
     .error { color: #dc3545; padding: 2rem; text-align: center; }
   </style>
 </head>
@@ -35,12 +52,11 @@
 </main>
 
 <script>
-// Variant display config.
 const VARIANT_LABELS = {
-  baseline:       { label: "Baseline",        color: "#4361ee" },
-  adot:           { label: "+ADOT",           color: "#f72585" },
-  snapstart:      { label: "SnapStart",       color: "#4cc9f0" },
-  "snapstart-adot": { label: "SnapStart+ADOT", color: "#7209b7" },
+  baseline:           { label: "Baseline",        color: "#4361ee" },
+  adot:               { label: "+ADOT",           color: "#f72585" },
+  snapstart:          { label: "SnapStart",       color: "#4cc9f0" },
+  "snapstart-adot":   { label: "SnapStart+ADOT",  color: "#7209b7" },
 };
 
 const RUNTIME_LABELS = {
@@ -67,49 +83,69 @@ function buildChart(canvasId, labels, datasets, yLabel) {
       responsive: true,
       plugins: { legend: { position: "top" } },
       scales: {
-        y: {
-          beginAtZero: true,
-          title: { display: true, text: yLabel },
-        },
-        x: {
-          title: { display: true, text: "Memory (MB)" },
-        },
+        y: { beginAtZero: true, title: { display: true, text: yLabel } },
+        x: { title: { display: true, text: "Memory (MB)" } },
       },
     },
   });
 }
 
-function buildTable(cells, memories, variants, isSnapStart) {
-  const headers = ["Memory (MB)", ...variants.map(v => VARIANT_LABELS[v]?.label ?? v)];
-  const rows = memories.map(mem => {
-    const cols = [mem];
-    for (const v of variants) {
-      const cid = `python-${v}-${mem}` in cells
-        ? `python-${v}-${mem}`
-        : null;
-      // Locate this cell by searching by convention.
-      const key = Object.keys(cells).find(k => k.endsWith(`-${v}-${mem}`)) ?? null;
-      const cell = key ? cells[key] : null;
-      if (!cell || cell.oom_count === cell.n) {
-        cols.push("OOM");
-      } else {
-        const durField = isSnapStart ? "restore_duration_ms" : "init_duration_ms";
-        cols.push(`p50: ${cell.p50} / p90: ${cell.p90} / p99: ${cell.p99}`);
-      }
-    }
-    return cols;
-  });
-  return { headers, rows };
+// Returns { p50, p90, p99, n } or null if cell is missing/all-OOM.
+function getCell(cells, runtime, variant, mem) {
+  const key = Object.keys(cells).find(k => k === `${runtime}-${variant}-${mem}`);
+  if (!key) return null;
+  const c = cells[key];
+  if (c.oom_count > 0 && c.oom_count === c.n) return "oom";
+  if (c.p50 == null) return null;
+  return c;
 }
 
-function renderTable(headers, rows) {
-  const thead = `<tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr>`;
-  const tbody = rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join("")}</tr>`).join("");
-  return `<table><thead>${thead}</thead><tbody>${tbody}</tbody></table>`;
+function fmtOverhead(baseCell, adotCell) {
+  if (!baseCell || !adotCell || baseCell === "oom" || adotCell === "oom") return "";
+  const delta = adotCell.p50 - baseCell.p50;
+  const pct   = ((delta / baseCell.p50) * 100).toFixed(0);
+  const sign  = delta >= 0 ? "+" : "";
+  const cls   = delta >= 0 ? "overhead-pos" : "overhead-neg";
+  return `<span class="${cls}">${sign}${delta.toFixed(0)} ms (${sign}${pct}%)</span>`;
 }
 
-function metaLine(meta, adotArn) {
-  return `Run: ${meta.run_id} · Region: ${meta.region} · Samples/cell: ${meta.samples_per_cell} · Harness SHA: ${meta.harness_sha} · Generated: ${meta.generated_at}`;
+function renderTableCell(cell) {
+  if (cell === null)    return `<span class="na">—</span>`;
+  if (cell === "oom")   return `<span class="oom">OOM</span>`;
+  return `p50 ${cell.p50} / p90 ${cell.p90} / p99 ${cell.p99} <span class="na">(n=${cell.n})</span>`;
+}
+
+function buildRuntimeTable(cells, runtime, variants, memories) {
+  // Build column headers: Memory | Baseline | +ADOT | ADOT Overhead | [SnapStart | SnapStart+ADOT | SS+ADOT Overhead]
+  const hasSnapstart = variants.includes("snapstart");
+  const cols = variants.filter(v => v === "baseline" || v === "adot" || v === "snapstart" || v === "snapstart-adot");
+
+  let thead = `<tr><th>Memory (MB)</th>`;
+  for (const v of cols) thead += `<th>${VARIANT_LABELS[v]?.label ?? v}</th>`;
+  if (cols.includes("baseline") && cols.includes("adot")) thead += `<th>ADOT Overhead (p50)</th>`;
+  if (cols.includes("snapstart") && cols.includes("snapstart-adot")) thead += `<th>SS+ADOT Overhead (p50)</th>`;
+  thead += `</tr>`;
+
+  let tbody = "";
+  for (const mem of memories) {
+    const cellMap = {};
+    for (const v of cols) cellMap[v] = getCell(cells, runtime, v, mem);
+
+    tbody += `<tr><td>${mem}</td>`;
+    for (const v of cols) tbody += `<td>${renderTableCell(cellMap[v])}</td>`;
+    if (cols.includes("baseline") && cols.includes("adot"))
+      tbody += `<td>${fmtOverhead(cellMap["baseline"], cellMap["adot"])}</td>`;
+    if (cols.includes("snapstart") && cols.includes("snapstart-adot"))
+      tbody += `<td>${fmtOverhead(cellMap["snapstart"], cellMap["snapstart-adot"])}</td>`;
+    tbody += `</tr>`;
+  }
+
+  return `<div class="table-wrap"><table><thead>${thead}</thead><tbody>${tbody}</tbody></table></div>`;
+}
+
+function metaLine(meta) {
+  const d = new Date(meta.generated_at).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+  return `Run: ${meta.run_id} · Region: ${meta.region} · ${meta.samples_per_cell} samples/cell · SHA: ${meta.harness_sha} · ${d}`;
 }
 
 async function render() {
@@ -118,35 +154,62 @@ async function render() {
     const p1 = await loadJSON("data/phase1/aggregated.json");
     const p2 = await loadJSON("data/phase2/aggregated.json").catch(() => null);
 
+    const isSmoke = p1.meta.samples_per_cell <= 2;
+    const smokeBadge = isSmoke ? `<span class="badge badge-smoke">Smoke test data</span>` : "";
+
     let html = "";
 
     // ── Phase 1 ──────────────────────────────────────────────────────────────
-    html += `<section><h2>Phase 1 — Cold Start Init Duration (p50, ms)</h2>`;
-    html += `<p class="meta">${metaLine(p1.meta)}</p>`;
+    html += `<section>
+      <h2>Phase 1 — Cold Start Init / Restore Duration ${smokeBadge}</h2>
+      <p class="meta">${metaLine(p1.meta)}</p>`;
+
+    if (isSmoke) {
+      html += `<p class="note">Showing smoke-test data (512 MB only, 2 samples). Trigger the full workflow to populate all memory sizes.</p>`;
+    }
 
     const p1Runtimes = {
-      node:   { variants: ["baseline", "adot"],                           memories: MEMORY_SIZES_P1 },
+      node:   { variants: ["baseline", "adot"],                               memories: MEMORY_SIZES_P1 },
       python: { variants: ["baseline", "adot", "snapstart", "snapstart-adot"], memories: MEMORY_SIZES_P1 },
-      rust:   { variants: ["baseline", "adot"],                           memories: MEMORY_SIZES_P1 },
+      rust:   { variants: ["baseline", "adot"],                               memories: MEMORY_SIZES_P1 },
     };
 
     for (const [rt, conf] of Object.entries(p1Runtimes)) {
+      html += `<h3>${RUNTIME_LABELS[rt]}</h3>`;
       html += `<div class="chart-wrap"><canvas id="p1-${rt}"></canvas></div>`;
-      const { headers, rows } = buildTable(p1.cells, conf.memories, conf.variants, false);
-      html += renderTable(headers, rows);
-      html += "<br>";
+      html += buildRuntimeTable(p1.cells, rt, conf.variants, conf.memories);
     }
-    html += "</section>";
+    html += `</section>`;
 
     // ── Phase 2 ──────────────────────────────────────────────────────────────
     if (p2) {
-      html += `<section><h2>Phase 2 — Steady-State Per-Invocation Duration (p50, ms)</h2>`;
-      html += `<p class="meta">${metaLine(p2.meta)}</p>`;
-      html += `<div class="chart-wrap"><canvas id="p2-all"></canvas></div>`;
-      html += "</section>";
+      html += `<section>
+        <h2>Phase 2 — Steady-State Per-Invocation Duration (p50, ms)</h2>
+        <p class="meta">${metaLine(p2.meta)}</p>
+        <div class="chart-wrap"><canvas id="p2-all"></canvas></div>`;
+
+      // Phase 2 table
+      let p2thead = `<tr><th>Runtime · Memory</th><th>Baseline</th><th>+ADOT</th><th>ADOT Overhead (p50)</th></tr>`;
+      let p2tbody = "";
+      for (const rt of ["node", "python", "rust"]) {
+        for (const mem of MEMORY_SIZES_P2) {
+          const base = getCell(p2.cells, rt, "baseline", mem);
+          const adot = getCell(p2.cells, rt, "adot", mem);
+          p2tbody += `<tr>
+            <td>${RUNTIME_LABELS[rt]} ${mem} MB</td>
+            <td>${renderTableCell(base)}</td>
+            <td>${renderTableCell(adot)}</td>
+            <td>${fmtOverhead(base, adot)}</td>
+          </tr>`;
+        }
+      }
+      html += `<div class="table-wrap"><table><thead>${p2thead}</thead><tbody>${p2tbody}</tbody></table></div>`;
+      html += `</section>`;
     } else {
-      html += `<section><h2>Phase 2 — Steady-State Per-Invocation Duration</h2>
-        <p class="meta">Not yet available — requires an OpenObserve endpoint. Run the workflow with the o2_endpoint input.</p></section>`;
+      html += `<section>
+        <h2>Phase 2 — Steady-State Per-Invocation Duration</h2>
+        <p class="meta">Not yet available — requires an OpenObserve endpoint. Run the workflow with the <code>o2_endpoint</code> input.</p>
+      </section>`;
     }
 
     app.innerHTML = html;
@@ -161,37 +224,35 @@ async function render() {
           borderColor: vc.color,
           borderWidth: 1,
           data: conf.memories.map(mem => {
-            const key = Object.keys(p1.cells).find(k => k.startsWith(`${rt}-${v}-${mem}`)) ?? null;
-            return key ? (p1.cells[key].p50 ?? null) : null;
+            const c = getCell(p1.cells, rt, v, mem);
+            return (c && c !== "oom") ? c.p50 : null;
           }),
         };
       });
-      buildChart(`p1-${rt}`, conf.memories.map(String), datasets, "Init / Restore Duration p50 (ms)");
+      buildChart(`p1-${rt}`, conf.memories.map(String), datasets, "p50 ms");
     }
 
-    // Draw Phase 2 chart only when data is available.
     if (!p2) return;
-    const p2Runtimes = ["node", "python", "rust"];
-    const p2Labels = [];
-    const p2BaseData = [];
-    const p2AdotData = [];
-    for (const rt of p2Runtimes) {
+
+    // Draw Phase 2 chart.
+    const p2Labels = [], p2BaseData = [], p2AdotData = [];
+    for (const rt of ["node", "python", "rust"]) {
       for (const mem of MEMORY_SIZES_P2) {
         p2Labels.push(`${RUNTIME_LABELS[rt]} ${mem}MB`);
-        const baseKey = Object.keys(p2.cells).find(k => k.startsWith(`${rt}-baseline-${mem}`));
-        const adotKey = Object.keys(p2.cells).find(k => k.startsWith(`${rt}-adot-${mem}`));
-        p2BaseData.push(baseKey ? p2.cells[baseKey].p50 : null);
-        p2AdotData.push(adotKey ? p2.cells[adotKey].p50 : null);
+        const base = getCell(p2.cells, rt, "baseline", mem);
+        const adot = getCell(p2.cells, rt, "adot", mem);
+        p2BaseData.push((base && base !== "oom") ? base.p50 : null);
+        p2AdotData.push((adot && adot !== "oom") ? adot.p50 : null);
       }
     }
     buildChart("p2-all", p2Labels, [
-      { label: "Baseline", backgroundColor: "#4361eecc", data: p2BaseData },
-      { label: "+ADOT",    backgroundColor: "#f72585cc", data: p2AdotData },
-    ], "Duration p50 (ms)");
+      { label: "Baseline", backgroundColor: "#4361eecc", borderColor: "#4361ee", borderWidth: 1, data: p2BaseData },
+      { label: "+ADOT",    backgroundColor: "#f72585cc", borderColor: "#f72585", borderWidth: 1, data: p2AdotData },
+    ], "p50 ms");
 
   } catch (err) {
     app.innerHTML = `<p class="error">Could not load results: ${err.message}<br>
-      Run the harness to generate data/phase1/aggregated.json and data/phase2/aggregated.json.</p>`;
+      Run the harness to generate data/phase1/aggregated.json.</p>`;
   }
 }
 
