@@ -96,13 +96,13 @@ def wait_for_update(lam, name: str, timeout: int = 120):
     raise TimeoutError(f"Timed out waiting for {name} update after {timeout}s")
 
 
-def fetch_report_line(logs, log_group: str, request_id: str, retries: int = 10) -> str:
+def fetch_report_line(logs, log_group: str, request_id: str, retries: int = 20) -> str:
     """Fetch the REPORT log line for a given request ID (design doc §4.2)."""
     for attempt in range(retries):
-        time.sleep(2 + attempt)  # CloudWatch Logs has ingestion lag
+        time.sleep(5 + attempt * 2)  # CloudWatch ingestion lag; new log groups take longer
         resp = logs.filter_log_events(
             logGroupName=log_group,
-            filterPattern=f'"REPORT RequestId: {request_id}"',
+            filterPattern=f"REPORT RequestId: {request_id}",
         )
         for event in resp.get("events", []):
             if "REPORT RequestId:" in event["message"] and request_id in event["message"]:
@@ -129,8 +129,10 @@ def aggregate_cell(samples: list) -> dict:
         for s in samples
         if (s.get("restore_duration_ms") or s.get("init_duration_ms")) is not None
     ]
+    oom_count = sum(1 for s in samples if s.get("oom"))
+    error_count = sum(1 for s in samples if s.get("error"))
     if not durations:
-        return {"n": len(samples), "oom_count": len(samples)}
+        return {"n": len(samples), "oom_count": oom_count, "error_count": error_count}
     return {
         "p50": round(percentile(durations, 50), 2),
         "p90": round(percentile(durations, 90), 2),
@@ -138,7 +140,8 @@ def aggregate_cell(samples: list) -> dict:
         "min": round(min(durations), 2),
         "max": round(max(durations), 2),
         "n": len(durations),
-        "oom_count": sum(1 for s in samples if s.get("oom")),
+        "oom_count": oom_count,
+        "error_count": error_count,
     }
 
 
