@@ -96,13 +96,16 @@ def wait_for_update(lam, name: str, timeout: int = 120):
     raise TimeoutError(f"Timed out waiting for {name} update after {timeout}s")
 
 
-def fetch_report_line(logs, log_group: str, request_id: str, retries: int = 20) -> str:
+def fetch_report_line(logs, log_group: str, request_id: str, invoked_at_ms: int, retries: int = 20) -> str:
     """Fetch the REPORT log line for a given request ID (design doc §4.2)."""
+    # Search from 5 seconds before invocation to avoid scanning old log streams.
+    start_time = invoked_at_ms - 5000
     for attempt in range(retries):
         time.sleep(5 + attempt * 2)  # CloudWatch ingestion lag; new log groups take longer
         resp = logs.filter_log_events(
             logGroupName=log_group,
-            filterPattern=f"REPORT RequestId: {request_id}",
+            filterPattern=f'"REPORT RequestId: {request_id}"',
+            startTime=start_time,
         )
         for event in resp.get("events", []):
             if "REPORT RequestId:" in event["message"] and request_id in event["message"]:
@@ -217,6 +220,7 @@ def run_cell(
                 LogType="None",
                 Payload=b"{}",
             )
+            invoked_at_ms = int(time.time() * 1000)
             request_id = invoke_resp["ResponseMetadata"]["RequestId"]
             sample["request_id"] = request_id
 
@@ -228,7 +232,7 @@ def run_cell(
                 continue
 
             # Step 4+5: fetch REPORT line and parse it.
-            report_line = fetch_report_line(logs, log_group, request_id)
+            report_line = fetch_report_line(logs, log_group, request_id, invoked_at_ms)
             parsed = parse_report_line(report_line)
             sample.update(parsed)
 
@@ -273,6 +277,19 @@ def git_sha() -> str:
         return "unknown"
 
 
+# One cell from each Phase 1 variant group at 512 MB — representative smoke test.
+SMOKE_CELLS = [
+    ("node",   "baseline",      512),
+    ("node",   "adot",          512),
+    ("python", "baseline",      512),
+    ("python", "adot",          512),
+    ("python", "snapstart",     512),
+    ("python", "snapstart-adot",512),
+    ("rust",   "baseline",      512),
+    ("rust",   "adot",          512),
+]
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--phase", type=int, required=True, choices=[1, 2])
@@ -280,6 +297,8 @@ def main():
                         help="Cold samples per cell (default: 10, design doc §3)")
     parser.add_argument("--cells", type=int, default=0,
                         help="Limit to first N cells (0 = all; use 1 for dry-run)")
+    parser.add_argument("--smoke", action="store_true",
+                        help="Quick end-to-end check: 1 cell per variant group, 2 samples")
     parser.add_argument("--o2-endpoint", default=os.environ.get("O2_ENDPOINT"),
                         help="OpenObserve OTLP endpoint for Phase 2 ADOT variants")
     args = parser.parse_args()
@@ -297,9 +316,15 @@ def main():
         snapstart_versions = json.loads(sv_path.read_text())
 
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid.uuid4().hex[:6]
-    cells = PHASE1_CELLS if args.phase == 1 else PHASE2_CELLS
-    if args.cells:
-        cells = cells[: args.cells]
+
+    if args.smoke:
+        cells = SMOKE_CELLS
+        if args.samples == 10:  # override default only when not explicitly set
+            args.samples = 2
+    else:
+        cells = PHASE1_CELLS if args.phase == 1 else PHASE2_CELLS
+        if args.cells:
+            cells = cells[: args.cells]
 
     print(f"Run {run_id} | phase {args.phase} | {len(cells)} cells × {args.samples} samples")
 

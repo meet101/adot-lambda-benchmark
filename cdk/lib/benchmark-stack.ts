@@ -72,10 +72,9 @@ export class BenchmarkStack extends cdk.Stack {
         ),
         handler: "index.handler",
         layers: [adotNodeLayer],
-        environment: {
-          AWS_LAMBDA_EXEC_WRAPPER: "/opt/otel-handler",
-          OTEL_NODE_ENABLED_INSTRUMENTATIONS: "aws-sdk,aws-lambda,http",
-        },
+        // No exec wrapper: Node.js 24 removed callback-based handler support,
+        // which the otel-handler wrapper relied on. Collector extension still runs.
+        environment: {},
       });
     }
 
@@ -171,9 +170,7 @@ export class BenchmarkStack extends cdk.Stack {
         layers: [adotNodeLayer],
         environment: {
           ...phase2TableEnv,
-          AWS_LAMBDA_EXEC_WRAPPER: "/opt/otel-handler",
-          OTEL_NODE_ENABLED_INSTRUMENTATIONS: "aws-sdk,aws-lambda,http",
-          // OTEL_EXPORTER_OTLP_ENDPOINT is set at runtime via harness env update
+          // No exec wrapper: Node.js 24 incompatible with callback-based otel-handler.
         },
         role: p2NodeRole,
       });
