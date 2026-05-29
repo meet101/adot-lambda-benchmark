@@ -1,0 +1,23 @@
+{
+  "cell_id": "node-baseline-512",
+  "samples": [
+    {
+      "timestamp": "2026-05-29T04:48:58.557032+00:00",
+      "runtime": "node",
+      "variant": "baseline",
+      "memory_mb": 512,
+      "sample_index": 0,
+      "request_id": "9e9609f4-e5a9-4625-a05c-590ce4679c4e",
+      "error": "REPORT line for 9e9609f4-e5a9-4625-a05c-590ce4679c4e not found in /aws/lambda/bench-p1-node-baseline-512"
+    },
+    {
+      "timestamp": "2026-05-29T04:57:15.721900+00:00",
+      "runtime": "node",
+      "variant": "baseline",
+      "memory_mb": 512,
+      "sample_index": 1,
+      "request_id": "8b2d3c67-73df-4f93-95a6-df784047913a",
+      "error": "REPORT line for 8b2d3c67-73df-4f93-95a6-df784047913a not found in /aws/lambda/bench-p1-node-baseline-512"
+    }
+  ]
+}

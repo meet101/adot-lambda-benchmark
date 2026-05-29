@@ -1,0 +1,23 @@
+{
+  "cell_id": "rust-adot-512",
+  "samples": [
+    {
+      "timestamp": "2026-05-29T04:46:01.939661+00:00",
+      "runtime": "rust",
+      "variant": "adot",
+      "memory_mb": 512,
+      "sample_index": 0,
+      "request_id": "064f8f76-998c-4c3c-8f96-f11721f68cbb",
+      "error": "An error occurred (InvalidParameterException) when calling the FilterLogEvents operation: Invalid character(s) in term ':'"
+    },
+    {
+      "timestamp": "2026-05-29T04:46:11.329256+00:00",
+      "runtime": "rust",
+      "variant": "adot",
+      "memory_mb": 512,
+      "sample_index": 1,
+      "request_id": "907e4249-1dfb-4f7c-ae40-29c9c5b1b0dd",
+      "error": "An error occurred (InvalidParameterException) when calling the FilterLogEvents operation: Invalid character(s) in term ':'"
+    }
+  ]
+}

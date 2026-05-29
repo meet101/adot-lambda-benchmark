@@ -1,0 +1,23 @@
+{
+  "cell_id": "python-snapstart-adot-512",
+  "samples": [
+    {
+      "timestamp": "2026-05-29T04:45:24.495165+00:00",
+      "runtime": "python",
+      "variant": "snapstart-adot",
+      "memory_mb": 512,
+      "sample_index": 0,
+      "request_id": "c3528963-5b20-4ed0-bf3b-0b491fc06884",
+      "error": "An error occurred (InvalidParameterException) when calling the FilterLogEvents operation: Invalid character(s) in term ':'"
+    },
+    {
+      "timestamp": "2026-05-29T04:45:34.572347+00:00",
+      "runtime": "python",
+      "variant": "snapstart-adot",
+      "memory_mb": 512,
+      "sample_index": 1,
+      "request_id": "ef44db07-36a6-4a3a-9c0f-f3a577da74d8",
+      "error": "An error occurred (InvalidParameterException) when calling the FilterLogEvents operation: Invalid character(s) in term ':'"
+    }
+  ]
+}

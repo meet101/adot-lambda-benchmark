@@ -1,0 +1,23 @@
+{
+  "cell_id": "node-adot-512",
+  "samples": [
+    {
+      "timestamp": "2026-05-29T05:21:01.875874+00:00",
+      "runtime": "node",
+      "variant": "adot",
+      "memory_mb": 512,
+      "sample_index": 0,
+      "request_id": "196cd11e-bcc1-4728-a25a-13079830254f",
+      "oom": true
+    },
+    {
+      "timestamp": "2026-05-29T05:21:07.232110+00:00",
+      "runtime": "node",
+      "variant": "adot",
+      "memory_mb": 512,
+      "sample_index": 1,
+      "request_id": "11d8bfe2-52f2-4384-8ed7-99b5ccaae841",
+      "oom": true
+    }
+  ]
+}

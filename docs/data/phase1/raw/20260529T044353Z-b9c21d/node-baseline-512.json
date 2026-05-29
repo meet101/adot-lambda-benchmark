@@ -1,0 +1,23 @@
+{
+  "cell_id": "node-baseline-512",
+  "samples": [
+    {
+      "timestamp": "2026-05-29T04:43:56.607105+00:00",
+      "runtime": "node",
+      "variant": "baseline",
+      "memory_mb": 512,
+      "sample_index": 0,
+      "request_id": "a8956dd4-a24e-4e1c-8bc9-008a7916b4b9",
+      "error": "An error occurred (InvalidParameterException) when calling the FilterLogEvents operation: Invalid character(s) in term ':'"
+    },
+    {
+      "timestamp": "2026-05-29T04:44:05.566412+00:00",
+      "runtime": "node",
+      "variant": "baseline",
+      "memory_mb": 512,
+      "sample_index": 1,
+      "request_id": "a26e4133-19dc-4f66-a055-c5f951802a78",
+      "error": "An error occurred (InvalidParameterException) when calling the FilterLogEvents operation: Invalid character(s) in term ':'"
+    }
+  ]
+}

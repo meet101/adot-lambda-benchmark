@@ -1,0 +1,31 @@
+{
+  "cell_id": "node-adot-512",
+  "samples": [
+    {
+      "timestamp": "2026-05-29T05:28:24.010744+00:00",
+      "runtime": "node",
+      "variant": "adot",
+      "memory_mb": 512,
+      "sample_index": 0,
+      "request_id": "ce6009a8-3b94-4959-acd8-bda18c0bbe40",
+      "init_duration_ms": 435.51,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 460.0,
+      "duration_ms": 23.95,
+      "max_memory_used_mb": 118.0
+    },
+    {
+      "timestamp": "2026-05-29T05:28:41.924695+00:00",
+      "runtime": "node",
+      "variant": "adot",
+      "memory_mb": 512,
+      "sample_index": 1,
+      "request_id": "2d72d338-9267-4c98-bbb9-a969ce58af9f",
+      "init_duration_ms": 487.67,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 511.0,
+      "duration_ms": 22.36,
+      "max_memory_used_mb": 117.0
+    }
+  ]
+}

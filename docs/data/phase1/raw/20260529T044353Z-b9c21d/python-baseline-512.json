@@ -1,0 +1,23 @@
+{
+  "cell_id": "python-baseline-512",
+  "samples": [
+    {
+      "timestamp": "2026-05-29T04:44:26.580470+00:00",
+      "runtime": "python",
+      "variant": "baseline",
+      "memory_mb": 512,
+      "sample_index": 0,
+      "request_id": "f0a6e059-03c9-4cab-8efb-326865f8e3ba",
+      "error": "An error occurred (InvalidParameterException) when calling the FilterLogEvents operation: Invalid character(s) in term ':'"
+    },
+    {
+      "timestamp": "2026-05-29T04:44:35.736403+00:00",
+      "runtime": "python",
+      "variant": "baseline",
+      "memory_mb": 512,
+      "sample_index": 1,
+      "request_id": "01fb706c-bd76-48fb-ac76-0e5381e4c502",
+      "error": "An error occurred (InvalidParameterException) when calling the FilterLogEvents operation: Invalid character(s) in term ':'"
+    }
+  ]
+}

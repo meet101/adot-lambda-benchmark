@@ -1,0 +1,23 @@
+{
+  "cell_id": "python-adot-512",
+  "samples": [
+    {
+      "timestamp": "2026-05-29T04:44:45.166952+00:00",
+      "runtime": "python",
+      "variant": "adot",
+      "memory_mb": 512,
+      "sample_index": 0,
+      "request_id": "5d7e7d71-e777-4fc7-a1dd-3e7d4a365cc5",
+      "error": "An error occurred (InvalidParameterException) when calling the FilterLogEvents operation: Invalid character(s) in term ':'"
+    },
+    {
+      "timestamp": "2026-05-29T04:44:55.799414+00:00",
+      "runtime": "python",
+      "variant": "adot",
+      "memory_mb": 512,
+      "sample_index": 1,
+      "request_id": "3a695b75-333e-47c7-a241-83f0e2accacd",
+      "error": "An error occurred (InvalidParameterException) when calling the FilterLogEvents operation: Invalid character(s) in term ':'"
+    }
+  ]
+}
