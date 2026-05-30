@@ -40,6 +40,15 @@
     .note { font-size: 0.8rem; color: #6c757d; background: #fff; border-left: 3px solid #dee2e6;
             padding: 0.6rem 1rem; border-radius: 0 4px 4px 0; margin-bottom: 1rem; }
     .error { color: #dc3545; padding: 2rem; text-align: center; }
+    .intro { background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+             padding: 1.2rem 1.5rem; margin-bottom: 2rem; font-size: 0.88rem; line-height: 1.6; }
+    .intro p { margin-bottom: 0.6rem; }
+    .intro p:last-child { margin-bottom: 0; }
+    .legend { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; margin-top: 0.8rem; }
+    .legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; }
+    .legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+    .caveats { margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px solid #f0f0f0; }
+    .caveats li { margin-left: 1.2rem; margin-bottom: 0.3rem; font-size: 0.82rem; color: #495057; }
   </style>
 </head>
 <body>
@@ -48,6 +57,35 @@
   <p>ARM64 · us-east-1 · Node.js 24 · Python 3.13 · Rust (provided.al2023)</p>
 </header>
 <main>
+  <div class="intro">
+    <p>
+      <strong>What this is:</strong> A cold-start latency benchmark measuring the overhead added by the
+      <a href="https://aws-otel.github.io/docs/getting-started/lambda" target="_blank">AWS Distro for OpenTelemetry (ADOT)</a>
+      Lambda layer across three runtimes, seven memory sizes, and (for Python) with and without SnapStart.
+      All functions run on <strong>ARM64 (Graviton)</strong> in <strong>us-east-1</strong>.
+      Each cell is sampled across 5 independent workflow runs for statistical confidence.
+    </p>
+    <p>
+      <strong>Phase 1</strong> measures <em>cold start init/restore duration</em> — the time Lambda spends initialising
+      a new execution environment before the handler runs. Higher memory = more CPU, which generally reduces init time.
+      <strong>Phase 2</strong> measures <em>per-invocation warm duration</em> with live DynamoDB I/O and an
+      OpenObserve backend — the steady-state overhead of the ADOT collector sidecar.
+    </p>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#4361ee"></div><strong>Baseline</strong> — function only, no ADOT layer</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f72585"></div><strong>+ADOT</strong> — ADOT layer attached, collector sidecar runs alongside the function</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#4cc9f0"></div><strong>SnapStart</strong> — Python only; Lambda restores from a pre-initialised snapshot instead of cold-starting</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#7209b7"></div><strong>SnapStart+ADOT</strong> — SnapStart with the ADOT layer attached</div>
+    </div>
+    <ul class="caveats">
+      <li><strong>Node.js 24 + ADOT:</strong> The <code>otel-handler</code> exec wrapper relies on callback-based handlers removed in Node.js 24.
+          The +ADOT variant runs the collector extension only (no SDK auto-instrumentation), so the overhead shown is purely the sidecar startup cost.</li>
+      <li><strong>SnapStart sample count:</strong> Env-var nonce changes do not force a SnapStart restore — Lambda only restores when
+          it recycles an execution environment. Expect <em>n=1–3</em> cold samples per run; treat those numbers as directional.</li>
+      <li><strong>ADOT layer versions:</strong> Python <code>aws-otel-python-arm64-ver-1-32-0:2</code> ·
+          Node.js <code>aws-otel-nodejs-arm64-ver-1-30-2:1</code> · Rust collector <code>aws-otel-collector-arm64-ver-0-117-0:1</code>.</li>
+    </ul>
+  </div>
   <div id="app"><p style="padding:2rem;text-align:center">Loading results…</p></div>
 </main>
 
