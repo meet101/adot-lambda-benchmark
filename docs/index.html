@@ -145,7 +145,8 @@ function buildRuntimeTable(cells, runtime, variants, memories) {
 
 function metaLine(meta) {
   const d = new Date(meta.generated_at).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
-  return `Run: ${meta.run_id} · Region: ${meta.region} · ${meta.samples_per_cell} samples/cell · SHA: ${meta.harness_sha} · ${d}`;
+  const runs = meta.run_count ? `${meta.run_count} run(s)` : `Run: ${meta.run_id}`;
+  return `${runs} · ${meta.samples_per_cell} samples/cell · Region: ${meta.region} · SHA: ${meta.harness_sha} · ${d}`;
 }
 
 async function render() {
@@ -154,7 +155,7 @@ async function render() {
     const p1 = await loadJSON("data/phase1/aggregated.json");
     const p2 = await loadJSON("data/phase2/aggregated.json").catch(() => null);
 
-    const isSmoke = p1.meta.samples_per_cell <= 2;
+    const isSmoke = (p1.meta.run_count ?? 1) === 1 && p1.meta.samples_per_cell <= 2;
     const smokeBadge = isSmoke ? `<span class="badge badge-smoke">Smoke test data</span>` : "";
 
     let html = "";

@@ -347,25 +347,42 @@ def main():
         )
         all_cell_results.append(result)
 
-    # Aggregate results (design doc §4.3).
+    # Cross-run aggregation: combine samples from ALL raw files ever written for
+    # this phase, not just the current run (design doc §4.3 / 5 runs × 10 samples).
+    raw_root = Path(f"docs/data/phase{args.phase}/raw")
+    all_samples_by_cell: dict = {}
+    for cell_file in sorted(raw_root.glob("*/*.json")):
+        try:
+            data = json.loads(cell_file.read_text())
+            cid = data["cell_id"]
+            all_samples_by_cell.setdefault(cid, []).extend(data["samples"])
+        except Exception as exc:
+            print(f"  Warning: could not read {cell_file}: {exc}", file=sys.stderr)
+
+    # Count distinct run IDs that contributed samples.
+    run_dirs = sorted({p.parent.name for p in raw_root.glob("*/*.json")})
+
     aggregated = {
         "meta": {
             "run_id": run_id,
+            "run_count": len(run_dirs),
+            "run_ids": run_dirs,
             "phase": args.phase,
             "region": REGION,
             "harness_sha": git_sha(),
-            "samples_per_cell": args.samples,
+            "samples_per_cell": len(next(iter(all_samples_by_cell.values()), [])),
             "generated_at": datetime.now(timezone.utc).isoformat(),
         },
         "cells": {
-            r["cell_id"]: aggregate_cell(r["samples"]) for r in all_cell_results
+            cid: aggregate_cell(samples)
+            for cid, samples in all_samples_by_cell.items()
         },
     }
 
     agg_path = Path(f"docs/data/phase{args.phase}/aggregated.json")
     agg_path.parent.mkdir(parents=True, exist_ok=True)
     agg_path.write_text(json.dumps(aggregated, indent=2))
-    print(f"\nAggregated results written to {agg_path}")
+    print(f"\nAggregated {len(aggregated['cells'])} cells across {len(run_dirs)} run(s) → {agg_path}")
 
     if results_bucket and s3:
         s3.put_object(
