@@ -30,18 +30,14 @@ export class BenchmarkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: cdk.StackProps) {
     super(scope, id, props);
 
-    this.resultsBucket = new s3.Bucket(this, "ResultsBucket", {
-      bucketName: `adot-benchmark-results-${this.account}`,
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
-      versioned: false,
-    });
+    // Import retained resources (bucket and table survive stack teardown).
+    this.resultsBucket = s3.Bucket.fromBucketName(
+      this, "ResultsBucket", `adot-benchmark-results-${this.account}`
+    ) as s3.Bucket;
 
-    this.phase2Table = new dynamodb.Table(this, "Phase2Table", {
-      tableName: "bench-phase2-items",
-      partitionKey: { name: "pk", type: dynamodb.AttributeType.STRING },
-      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
-    });
+    this.phase2Table = dynamodb.Table.fromTableName(
+      this, "Phase2Table", "bench-phase2-items"
+    ) as dynamodb.Table;
 
     const adotPythonLayer = lambda.LayerVersion.fromLayerVersionArn(
       this, "AdotPythonLayer", ADOT_LAYER_ARNS.python
