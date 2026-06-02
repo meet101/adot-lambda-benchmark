@@ -16,9 +16,14 @@ export class ObservabilityStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: cdk.StackProps) {
     super(scope, id, props);
 
-    // ── Security group (L1 to avoid VPC lookup — goes into default VPC) ───────
+    // VPC: autoconfig-vpc (vpc-0fd30279f6569abd4) — no default VPC in this account.
+    const VPC_ID    = "vpc-0fd30279f6569abd4";
+    const SUBNET_ID = "subnet-077253f58b3802eed"; // us-east-1a, public
+
+    // ── Security group ────────────────────────────────────────────────────────
     const sg = new ec2.CfnSecurityGroup(this, "ObsSG", {
-      groupDescription: "ADOT benchmark observability — OpenObserve + otelcol",
+      groupDescription: "ADOT benchmark observability: OpenObserve + otelcol",
+      vpcId: VPC_ID,
       securityGroupIngress: [
         { ipProtocol: "tcp", fromPort: 4317, toPort: 4317, cidrIp: "0.0.0.0/0", description: "OTLP gRPC from Lambda" },
         { ipProtocol: "tcp", fromPort: 5080, toPort: 5080, cidrIp: "0.0.0.0/0", description: "OpenObserve UI" },
@@ -145,6 +150,7 @@ EOF`,
     const instance = new ec2.CfnInstance(this, "ObsInstance", {
       imageId: "ami-084568db4383264d4",   // Ubuntu 24.04 LTS us-east-1 (2025-01)
       instanceType: "t3.small",
+      subnetId: SUBNET_ID,
       securityGroupIds: [sg.ref],
       iamInstanceProfile: profile.ref,
       userData: b64UserData,
