@@ -3,12 +3,8 @@ import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as iam from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
 
-// OpenObserve credentials — change password before deploying to a shared account.
-const OO_ADMIN_EMAIL    = "admin@example.com";
-const OO_ADMIN_PASSWORD = "BenchmarkPass123!";
-
-// otelcol-contrib version to install.
-const OTELCOL_VERSION = "0.117.0";
+// Jaeger v2 is a full OTel collector — receives OTLP on :4317, UI on :16686.
+const JAEGER_VERSION = "2.18.0";
 
 export class ObservabilityStack extends cdk.Stack {
   public readonly otlpEndpoint: string;
@@ -16,18 +12,18 @@ export class ObservabilityStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: cdk.StackProps) {
     super(scope, id, props);
 
-    // VPC: autoconfig-vpc (vpc-0fd30279f6569abd4) — no default VPC in this account.
+    // VPC: autoconfig-vpc — no default VPC in this account.
     const VPC_ID    = "vpc-0fd30279f6569abd4";
     const SUBNET_ID = "subnet-077253f58b3802eed"; // us-east-1a, public
 
     // ── Security group ────────────────────────────────────────────────────────
     const sg = new ec2.CfnSecurityGroup(this, "ObsSG", {
-      groupDescription: "ADOT benchmark observability: OpenObserve + otelcol",
+      groupDescription: "ADOT benchmark observability: Jaeger + otelcol",
       vpcId: VPC_ID,
       securityGroupIngress: [
-        { ipProtocol: "tcp", fromPort: 4317, toPort: 4317, cidrIp: "0.0.0.0/0", description: "OTLP gRPC from Lambda" },
-        { ipProtocol: "tcp", fromPort: 5080, toPort: 5080, cidrIp: "0.0.0.0/0", description: "OpenObserve UI" },
-        { ipProtocol: "tcp", fromPort: 22,   toPort: 22,   cidrIp: "0.0.0.0/0", description: "SSH" },
+        { ipProtocol: "tcp", fromPort: 4317,  toPort: 4317,  cidrIp: "0.0.0.0/0", description: "OTLP gRPC from Lambda" },
+        { ipProtocol: "tcp", fromPort: 16686, toPort: 16686, cidrIp: "0.0.0.0/0", description: "Jaeger UI" },
+        { ipProtocol: "tcp", fromPort: 22,    toPort: 22,    cidrIp: "0.0.0.0/0", description: "SSH" },
       ],
     });
 
@@ -43,48 +39,32 @@ export class ObservabilityStack extends cdk.Stack {
     });
 
     // ── User data ─────────────────────────────────────────────────────────────
-    const b64Auth = Buffer.from(`${OO_ADMIN_EMAIL}:${OO_ADMIN_PASSWORD}`).toString("base64");
-
     const script = [
       "#!/bin/bash",
-      "set -e",
+      "set -xe",
+      "exec > /var/log/userdata.log 2>&1",
       "apt-get update -y",
-      "apt-get install -y curl wget",
+      "apt-get install -y curl",
 
-      // ── OpenObserve ──────────────────────────────────────────────────────
-      "mkdir -p /opt/openobserve",
-      "cd /opt/openobserve",
-      `OO_VER=$(curl -s https://api.github.com/repos/openobserve/openobserve/releases/latest | grep tag_name | cut -d'"' -f4 | sed 's/v//')`,
-      `curl -sSfL "https://github.com/openobserve/openobserve/releases/latest/download/openobserve-v\${OO_VER}-linux-amd64.tar.gz" -o openobserve.tar.gz`,
-      "tar -xzf openobserve.tar.gz",
-      "chmod +x openobserve",
+      // ── Jaeger all-in-one (receives OTLP on :4317, UI on :16686) ─────────
+      "mkdir -p /opt/jaeger",
+      `curl -sSfL "https://github.com/jaegertracing/jaeger/releases/download/v${JAEGER_VERSION}/jaeger-${JAEGER_VERSION}-linux-amd64.tar.gz" -o /opt/jaeger/jaeger.tar.gz`,
+      "tar -xzf /opt/jaeger/jaeger.tar.gz -C /opt/jaeger --strip-components=1",
+      "chmod +x /opt/jaeger/jaeger",
 
-      `cat > /etc/systemd/system/openobserve.service << 'EOF'
-[Unit]
-Description=OpenObserve
-After=network.target
-
-[Service]
-Environment="ZO_ROOT_USER_EMAIL=${OO_ADMIN_EMAIL}"
-Environment="ZO_ROOT_USER_PASSWORD=${OO_ADMIN_PASSWORD}"
-Environment="ZO_DATA_DIR=/opt/openobserve/data"
-WorkingDirectory=/opt/openobserve
-ExecStart=/opt/openobserve/openobserve
-Restart=always
-RestartSec=5
-
-[Install]
-WantedBy=multi-user.target
-EOF`,
-
-      // ── otelcol-contrib ──────────────────────────────────────────────────
-      "mkdir -p /opt/otelcol",
-      "cd /opt/otelcol",
-      `curl -sSfL "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v${OTELCOL_VERSION}/otelcol-contrib_${OTELCOL_VERSION}_linux_amd64.tar.gz" -o otelcol.tar.gz`,
-      "tar -xzf otelcol.tar.gz",
-      "chmod +x otelcol-contrib",
-
-      `cat > /opt/otelcol/config.yaml << 'EOF'
+      // Jaeger v2 uses a YAML config (OTel Collector format).
+      `python3 -c "
+import base64, textwrap
+cfg = textwrap.dedent('''
+extensions:
+  jaeger_storage:
+    backends:
+      memstore:
+        memory:
+          max_traces: 100000
+  jaeger_query:
+    storage:
+      traces: memstore
 receivers:
   otlp:
     protocols:
@@ -92,63 +72,47 @@ receivers:
         endpoint: 0.0.0.0:4317
       http:
         endpoint: 0.0.0.0:4318
-
 processors:
   batch:
-    timeout: 5s
-
 exporters:
-  otlphttp/openobserve:
-    endpoint: http://localhost:5080/api/default
-    headers:
-      Authorization: "Basic ${b64Auth}"
-    tls:
-      insecure: true
-
+  jaeger_storage_exporter:
+    trace_storage: memstore
 service:
+  extensions: [jaeger_storage, jaeger_query]
   pipelines:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlphttp/openobserve]
-    metrics:
-      receivers: [otlp]
-      processors: [batch]
-      exporters: [otlphttp/openobserve]
-    logs:
-      receivers: [otlp]
-      processors: [batch]
-      exporters: [otlphttp/openobserve]
-EOF`,
+      exporters: [jaeger_storage_exporter]
+''').strip()
+open('/opt/jaeger/config.yaml','w').write(cfg)
+"`,
 
-      `cat > /etc/systemd/system/otelcol.service << 'EOF'
+      `cat > /etc/systemd/system/jaeger.service << 'SVCEOF'
 [Unit]
-Description=OpenTelemetry Collector
-After=network.target openobserve.service
+Description=Jaeger all-in-one v2
+After=network.target
 
 [Service]
-WorkingDirectory=/opt/otelcol
-ExecStart=/opt/otelcol/otelcol-contrib --config /opt/otelcol/config.yaml
+ExecStart=/opt/jaeger/jaeger --config=file:/opt/jaeger/config.yaml
 Restart=always
 RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
-EOF`,
+SVCEOF`,
 
       "systemctl daemon-reload",
-      "systemctl enable openobserve otelcol",
-      "systemctl start openobserve",
-      "sleep 5",
-      "systemctl start otelcol",
+      "systemctl enable jaeger",
+      "systemctl start jaeger",
+      "echo 'USERDATA COMPLETE'",
     ].join("\n");
 
     const b64UserData = Buffer.from(script).toString("base64");
 
     // ── EC2 instance (Ubuntu 24.04 LTS, x86_64, us-east-1) ───────────────────
-    // AMI ID for Ubuntu 24.04 LTS HVM SSD in us-east-1 — update if needed.
     const instance = new ec2.CfnInstance(this, "ObsInstance", {
-      imageId: "ami-084568db4383264d4",   // Ubuntu 24.04 LTS us-east-1 (2025-01)
+      imageId: "ami-084568db4383264d4",  // Ubuntu 24.04 LTS us-east-1
       instanceType: "t3.small",
       subnetId: SUBNET_ID,
       securityGroupIds: [sg.ref],
@@ -166,9 +130,9 @@ EOF`,
       value: this.otlpEndpoint,
       description: "OTLP gRPC endpoint — pass as o2_endpoint workflow input",
     });
-    new cdk.CfnOutput(this, "OpenObserveUI", {
-      value: `http://${eip.ref}:5080`,
-      description: `OpenObserve UI — login: ${OO_ADMIN_EMAIL} / ${OO_ADMIN_PASSWORD}`,
+    new cdk.CfnOutput(this, "JaegerUI", {
+      value: `http://${eip.ref}:16686`,
+      description: "Jaeger UI — search traces from Lambda invocations",
     });
   }
 }
