@@ -1,0 +1,31 @@
+{
+  "cell_id": "python-baseline-512",
+  "samples": [
+    {
+      "timestamp": "2026-06-02T05:06:17.330668+00:00",
+      "runtime": "python",
+      "variant": "baseline",
+      "memory_mb": 512,
+      "sample_index": 0,
+      "request_id": "4e5c409f-8da9-4b30-956f-e3396b08bf27",
+      "init_duration_ms": 470.92,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 550.0,
+      "duration_ms": 79.04,
+      "max_memory_used_mb": 90.0
+    },
+    {
+      "timestamp": "2026-06-02T05:06:26.882995+00:00",
+      "runtime": "python",
+      "variant": "baseline",
+      "memory_mb": 512,
+      "sample_index": 1,
+      "request_id": "0d3416c2-fabd-418a-8ca7-06db599bc49e",
+      "init_duration_ms": 490.1,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 563.0,
+      "duration_ms": 72.62,
+      "max_memory_used_mb": 90.0
+    }
+  ]
+}

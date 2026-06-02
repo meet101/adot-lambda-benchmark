@@ -22,6 +22,7 @@ export class ObservabilityStack extends cdk.Stack {
       vpcId: VPC_ID,
       securityGroupIngress: [
         { ipProtocol: "tcp", fromPort: 4317,  toPort: 4317,  cidrIp: "0.0.0.0/0", description: "OTLP gRPC from Lambda" },
+        { ipProtocol: "tcp", fromPort: 4318,  toPort: 4318,  cidrIp: "0.0.0.0/0", description: "OTLP HTTP from Lambda" },
         { ipProtocol: "tcp", fromPort: 16686, toPort: 16686, cidrIp: "0.0.0.0/0", description: "Jaeger UI" },
         { ipProtocol: "tcp", fromPort: 22,    toPort: 22,    cidrIp: "0.0.0.0/0", description: "SSH" },
       ],

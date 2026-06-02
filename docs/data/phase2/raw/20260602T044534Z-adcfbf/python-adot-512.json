@@ -1,0 +1,23 @@
+{
+  "cell_id": "python-adot-512",
+  "samples": [
+    {
+      "timestamp": "2026-06-02T04:46:54.039271+00:00",
+      "runtime": "python",
+      "variant": "adot",
+      "memory_mb": 512,
+      "sample_index": 0,
+      "request_id": "49385ff8-d359-4fbf-8b01-9a382db59f65",
+      "oom": true
+    },
+    {
+      "timestamp": "2026-06-02T04:46:58.435522+00:00",
+      "runtime": "python",
+      "variant": "adot",
+      "memory_mb": 512,
+      "sample_index": 1,
+      "request_id": "d63b2869-ed56-4d83-b8ec-49346dc5b810",
+      "oom": true
+    }
+  ]
+}

@@ -170,19 +170,6 @@ def run_cell(
     # SnapStart functions must be invoked via a published version ARN.
     invoke_target = snapstart_versions.get(name, name) if is_snapstart else name
 
-    # For Phase 2 ADOT variants, set the OpenObserve endpoint before running.
-    if phase == 2 and "adot" in variant and o2_endpoint:
-        lam.update_function_configuration(
-            FunctionName=name,
-            Environment={
-                "Variables": {
-                    "OTEL_EXPORTER_OTLP_ENDPOINT": o2_endpoint,
-                    "COLD_START_NONCE": "o2-setup",
-                }
-            },
-        )
-        wait_for_update(lam, name)
-
     # Fetch the deployed env vars once so nonce updates don't wipe them.
     # UpdateFunctionConfiguration replaces the entire Environment object.
     base_env = (
@@ -190,6 +177,9 @@ def run_cell(
         .get("Environment", {})
         .get("Variables", {})
     )
+
+    # Phase 2 ADOT: the ADOT collector config (OPENTELEMETRY_COLLECTOR_CONFIG_URI) already
+    # routes traces to Jaeger. No additional env vars needed from the harness.
 
     samples = []
 
@@ -277,16 +267,26 @@ def git_sha() -> str:
         return "unknown"
 
 
-# One cell from each Phase 1 variant group at 512 MB — representative smoke test.
-SMOKE_CELLS = [
-    ("node",   "baseline",      512),
-    ("node",   "adot",          512),
-    ("python", "baseline",      512),
-    ("python", "adot",          512),
-    ("python", "snapstart",     512),
-    ("python", "snapstart-adot",512),
-    ("rust",   "baseline",      512),
-    ("rust",   "adot",          512),
+# One cell from each variant group at 512 MB — representative smoke test.
+SMOKE_CELLS_P1 = [
+    ("node",   "baseline",       512),
+    ("node",   "adot",           512),
+    ("python", "baseline",       512),
+    ("python", "adot",           512),
+    ("python", "snapstart",      512),
+    ("python", "snapstart-adot", 512),
+    ("rust",   "baseline",       512),
+    ("rust",   "adot",           512),
+]
+
+# Phase 2 has no SnapStart variants.
+SMOKE_CELLS_P2 = [
+    ("node",   "baseline", 512),
+    ("node",   "adot",     512),
+    ("python", "baseline", 512),
+    ("python", "adot",     512),
+    ("rust",   "baseline", 512),
+    ("rust",   "adot",     512),
 ]
 
 
@@ -318,7 +318,7 @@ def main():
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid.uuid4().hex[:6]
 
     if args.smoke:
-        cells = SMOKE_CELLS
+        cells = SMOKE_CELLS_P1 if args.phase == 1 else SMOKE_CELLS_P2
         if args.samples == 10:  # override default only when not explicitly set
             args.samples = 2
     else:

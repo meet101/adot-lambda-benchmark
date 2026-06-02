@@ -1,0 +1,23 @@
+{
+  "cell_id": "rust-adot-512",
+  "samples": [
+    {
+      "timestamp": "2026-06-02T05:12:58.592405+00:00",
+      "runtime": "rust",
+      "variant": "adot",
+      "memory_mb": 512,
+      "sample_index": 0,
+      "request_id": "63b670ce-20cb-4788-8fe4-2b0b7974dd9d",
+      "oom": true
+    },
+    {
+      "timestamp": "2026-06-02T05:13:02.658500+00:00",
+      "runtime": "rust",
+      "variant": "adot",
+      "memory_mb": 512,
+      "sample_index": 1,
+      "request_id": "26e360ad-f04c-415a-a278-150e8276585c",
+      "oom": true
+    }
+  ]
+}

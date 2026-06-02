@@ -1,0 +1,31 @@
+{
+  "cell_id": "rust-adot-512",
+  "samples": [
+    {
+      "timestamp": "2026-06-02T05:07:45.175708+00:00",
+      "runtime": "rust",
+      "variant": "adot",
+      "memory_mb": 512,
+      "sample_index": 0,
+      "request_id": "1509e9b0-ade6-43cd-ad01-58142669e9d4",
+      "init_duration_ms": 333.75,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 563.0,
+      "duration_ms": 229.17,
+      "max_memory_used_mb": 69.0
+    },
+    {
+      "timestamp": "2026-06-02T05:08:02.532452+00:00",
+      "runtime": "rust",
+      "variant": "adot",
+      "memory_mb": 512,
+      "sample_index": 1,
+      "request_id": "baec9e5d-bfb1-4459-928f-7742f2fe813f",
+      "init_duration_ms": 452.44,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 708.0,
+      "duration_ms": 255.22,
+      "max_memory_used_mb": 70.0
+    }
+  ]
+}

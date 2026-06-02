@@ -1,0 +1,31 @@
+{
+  "cell_id": "rust-baseline-512",
+  "samples": [
+    {
+      "timestamp": "2026-06-02T04:57:18.924468+00:00",
+      "runtime": "rust",
+      "variant": "baseline",
+      "memory_mb": 512,
+      "sample_index": 0,
+      "request_id": "d3ce8320-a608-4f1d-9da4-98aec3dae62c",
+      "init_duration_ms": 91.42,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 279.0,
+      "duration_ms": 187.54,
+      "max_memory_used_mb": 30.0
+    },
+    {
+      "timestamp": "2026-06-02T04:57:28.320187+00:00",
+      "runtime": "rust",
+      "variant": "baseline",
+      "memory_mb": 512,
+      "sample_index": 1,
+      "request_id": "d2089468-b3ef-491b-beaa-f8ae896fe352",
+      "init_duration_ms": 127.03,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 356.0,
+      "duration_ms": 228.28,
+      "max_memory_used_mb": 30.0
+    }
+  ]
+}

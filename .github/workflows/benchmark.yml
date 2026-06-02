@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       o2_endpoint:
-        description: "OpenObserve OTLP endpoint for Phase 2 (e.g. http://1.2.3.4:4317)"
+        description: "Jaeger OTLP endpoint for Phase 2 (e.g. http://34.194.80.220:4317) — leave empty to skip Phase 2"
         required: false
         default: ""
 

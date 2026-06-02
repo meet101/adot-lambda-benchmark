@@ -1,0 +1,31 @@
+{
+  "cell_id": "python-adot-512",
+  "samples": [
+    {
+      "timestamp": "2026-06-02T05:02:13.608994+00:00",
+      "runtime": "python",
+      "variant": "adot",
+      "memory_mb": 512,
+      "sample_index": 0,
+      "request_id": "adc280c9-b81f-4f79-8643-c2d046b68090",
+      "init_duration_ms": 1163.87,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 1297.0,
+      "duration_ms": 132.2,
+      "max_memory_used_mb": 143.0
+    },
+    {
+      "timestamp": "2026-06-02T05:02:24.020043+00:00",
+      "runtime": "python",
+      "variant": "adot",
+      "memory_mb": 512,
+      "sample_index": 1,
+      "request_id": "3bb6995c-28ff-4d7d-bdd2-a5f53d12846a",
+      "init_duration_ms": 1257.36,
+      "restore_duration_ms": null,
+      "billed_duration_ms": 1403.0,
+      "duration_ms": 144.68,
+      "max_memory_used_mb": 143.0
+    }
+  ]
+}
